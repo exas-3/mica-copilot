@@ -142,6 +142,8 @@ evaluation results.
 
 - **Full documentation:** [`docs/DOCUMENTATION.md`](docs/DOCUMENTATION.md) — architecture, data flow, prompt design, evaluation.
 - **Usage examples:** [`docs/EXAMPLES.md`](docs/EXAMPLES.md) — copy-paste requests/responses for every endpoint, the SSE event stream, the UI flows, and the eval run.
+- **Data sources:** [`docs/DATA-SOURCES.md`](docs/DATA-SOURCES.md) — the documents, news feeds, ESMA registers and white-paper reads the copilot cites, with provenance + licensing.
+- **Methodology:** [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) — ingestion, chunking, embeddings, retrieval, agent routing, grounding/abstention, and the evaluation method.
 - **Docs index:** [`docs/README.md`](docs/README.md)
 - **Architecture diagram:** [`docs/architecture.svg`](docs/architecture.svg)
 - **Evaluation harness:** `python -m eval.run --e2e --judge` (or `make eval`)

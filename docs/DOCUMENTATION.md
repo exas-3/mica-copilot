@@ -43,6 +43,11 @@ answer they can trust and trace back to a specific article — not a plausible p
 | Sources | **EUR-Lex + ESMA/EBA** (docs) · **RSS** (news) · **ESMA register CSVs** (registers) | `feedparser` + `trafilatura` + `pypdf` ingest the regulation, RTS/ITS, guidelines/Q&As, full news articles, and the real ESMA registers (incl. Title II white papers, whose token is read from each document). |
 | UI | **Next.js 15 / React 19** | Streaming chat + structured result rendering; design system adapted from the author's `mica-dashboard` (warm-paper + EU-blue, hand-rolled — no Tailwind). |
 
+> **Provenance & method.** For the full source inventory (every document, feed and register, with
+> licensing + refresh cadence) see [`DATA-SOURCES.md`](DATA-SOURCES.md); for the end-to-end pipeline
+> (chunking, embeddings, retrieval, routing, evaluation, with exact parameters) see
+> [`METHODOLOGY.md`](METHODOLOGY.md).
+
 ## 4. Architecture & data flow
 
 ```
