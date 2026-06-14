@@ -1,0 +1,29 @@
+# MiCA Compliance Copilot — backend dependencies
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+python-dotenv==1.0.1
+
+# Claude (agent loop, structured outputs, streaming, prompt caching)
+# Floor chosen so output_config / adaptive thinking are available; the code also
+# degrades gracefully on older SDKs (try/except around the newest params).
+anthropic>=0.69
+
+# Postgres + pgvector
+psycopg[binary]>=3.2
+psycopg-pool>=3.2
+pgvector>=0.3.6
+
+# Embeddings — Voyage (default) and a local, zero-key fallback
+voyageai==0.3.2
+fastembed==0.5.1
+
+# Ingestion / eval helpers
+httpx==0.28.1
+
+# Document + news ingestion (v2 multi-source RAG)
+feedparser>=6.0        # RSS/Atom parsing for the news poller
+trafilatura>=1.12      # full-article main-text extraction (news)
+pypdf>=4.0             # PDF text extraction (ESMA/EBA documents)
+apscheduler>=3.10      # scheduled news polling

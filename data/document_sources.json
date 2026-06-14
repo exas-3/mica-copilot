@@ -1,0 +1,274 @@
+[
+  {
+    "kind": "eurlex",
+    "celex": "32023R1114",
+    "title": "Regulation (EU) 2023/1114 of the European Parliament and of the Council of 31 May 2023 on markets in crypto-assets, and amending Regulations (EU) No 1093/2010 and (EU) No 1095/2010 and Directives 2013/36/EU and (EU) 2019/1937 (MiCA)",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023R1114",
+    "doc_type": "regulation",
+    "authority": "EU"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0294",
+    "title": "Commission Delegated Regulation (EU) 2025/294 of 1 October 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the requirements, templates and procedures for the handling of complaints by the crypto-asset service providers",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0294",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0293",
+    "title": "Commission Delegated Regulation (EU) 2025/293 of 30 September 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the requirements, templates and procedures for the handling of complaints relating to asset referenced tokens",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0293",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R1142",
+    "title": "Commission Delegated Regulation (EU) 2025/1142 of 27 February 2025 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the requirements for policies and procedures on conflicts of interest for crypto-asset service providers and the details and methodology for the content of disclosures on conflicts of interest",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R1142",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0415",
+    "title": "Commission Delegated Regulation (EU) 2025/415 of 13 December 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying adjustment of own funds requirement and minimum features of stress testing programmes of issuers of asset-referenced tokens or of e-money tokens",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0415",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32024R2984",
+    "title": "Commission Implementing Regulation (EU) 2024/2984 of 29 November 2024 laying down implementing technical standards for the application of Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to forms, formats and templates for the crypto-asset white papers",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R2984",
+    "doc_type": "its",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0305",
+    "title": "Commission Delegated Regulation (EU) 2025/305 of 31 October 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the information to be included in an application for authorisation as a crypto-asset service provider",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0305",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0306",
+    "title": "Commission Implementing Regulation (EU) 2025/306 of 31 October 2024 laying down implementing technical standards for the application of Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to standard forms, templates and procedures for the information to be included in the application for authorisation as a crypto-asset service provider",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0306",
+    "doc_type": "its",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0417",
+    "title": "Commission Delegated Regulation (EU) 2025/417 of 28 November 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the manner in which crypto-asset service providers operating a trading platform for crypto-assets are to present transparency data",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0417",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0416",
+    "title": "Commission Delegated Regulation (EU) 2025/416 of 29 November 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the content and format of order book records for crypto-asset service providers operating a trading platform for crypto-assets",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0416",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0885",
+    "title": "Commission Delegated Regulation (EU) 2025/885 of 29 April 2025 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the arrangements, systems and procedures to prevent, detect and report market abuse, the templates to be used for reporting suspected market abuse, and the coordination procedures between the competent authorities for the detection and sanctioning of market abuse in cross-border market abuse situations",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0885",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0299",
+    "title": "Commission Delegated Regulation (EU) 2025/299 of 31 October 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council on markets in crypto-assets with regard to regulatory technical standards on continuity and regularity in the performance of crypto-asset services",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0299",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0413",
+    "title": "Commission Delegated Regulation (EU) 2025/413 of 18 December 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the detailed content of information necessary to carry out the assessment of a proposed acquisition of a qualifying holding in an issuer of an asset-referenced token",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0413",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0300",
+    "title": "Commission Delegated Regulation (EU) 2025/300 of 10 October 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards on information to be exchanged between competent authorities",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0300",
+    "doc_type": "rts",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32024R2902",
+    "title": "Commission Implementing Regulation (EU) 2024/2902 of 20 November 2024 laying down implementing technical standards for the application of Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to reporting related to asset-referenced tokens and to e-money tokens denominated in a currency that is not an official currency of a Member State",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R2902",
+    "doc_type": "its",
+    "authority": "European Commission"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "Final Report - Guidelines on the conditions and criteria for the qualification of crypto-assets as financial instruments (ESMA75453128700-1323)",
+    "url": "https://www.esma.europa.eu/sites/default/files/2024-12/ESMA75453128700-1323_Final_Report_Guidelines_on_the_conditions_and_criteria_for_the_qualification_of_CAs_as_FIs.pdf",
+    "doc_type": "guideline",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "Final Report - Guidelines on reverse solicitation under the Markets in Crypto-Assets Regulation (MiCA) (ESMA35-1872330276-1899)",
+    "url": "https://www.esma.europa.eu/sites/default/files/2024-12/ESMA35-1872330276-1899_-_Final_report_on_GLs_on_reverse_solicitation_under_MiCA.pdf",
+    "doc_type": "guideline",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "Guidelines on certain aspects of the suitability requirements and format of the periodic statement for portfolio management activities under the Markets in Crypto Assets Regulation (MiCA) (ESMA35-1872330276-2031)",
+    "url": "https://www.esma.europa.eu/sites/default/files/2025-03/ESMA35-1872330276-2031_Guidelines_on_suitability_and_periodic_statement_MiCA.pdf",
+    "doc_type": "guideline",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "Final Report on the Guidelines specifying certain requirements of the Markets in Crypto Assets Regulation (MiCA) on investor protection – third package (suitability, periodic statement, transfer services) (ESMA35-1872330276-1936)",
+    "url": "https://www.esma.europa.eu/sites/default/files/2024-12/ESMA35-1872330276-1936_MiCA_Final_Report_to_CP3_-_investor_protection_mandates.pdf",
+    "doc_type": "report",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "Guidelines on the specification of Union standards for the maintenance of systems and security access protocols for offerors and persons seeking admission to trading of crypto-assets other than asset referenced tokens and e-money tokens (ESMA75-223375936-6132)",
+    "url": "https://www.esma.europa.eu/sites/default/files/2025-02/ESMA75-223375936-6132_Guidelines_on_maintenance_of_systems_and_security_access_protocols_under_MiCA.pdf",
+    "doc_type": "guideline",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "Final Report on the Guidelines on supervisory practices for competent authorities to prevent and detect market abuse under MiCA (ESMA75-453128700-1408)",
+    "url": "https://www.esma.europa.eu/sites/default/files/2025-04/ESMA75-453128700-1408_Final_Report_MiCA_Guidelines_on_prevention_and_detection_of_market_abuse.pdf",
+    "doc_type": "report",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "Final Report on the Guidelines for the criteria on the assessment of knowledge and competence under the MiCA (ESMA35-1872330276-2380)",
+    "url": "https://www.esma.europa.eu/sites/default/files/2025-07/ESMA35-1872330276-2380_Final_Report_on_MiCA_Guidelines_on_knowledge_and_competence.pdf",
+    "doc_type": "report",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "Guidelines for the criteria on the assessment of knowledge and competence under the Markets in Crypto Assets Regulation (MiCA) (ESMA35-24871704-2922)",
+    "url": "https://www.esma.europa.eu/sites/default/files/2026-01/ESMA35-24871704-2922_Guidelines_for_the_criteria_on_the_assessment_of_knowledge_and_competence_under_MiCA.pdf",
+    "doc_type": "guideline",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "ESMA MiCA Q&A 2653 - Distinguishing between crypto-asset execution services (execution of orders, exchange, RTO) under MiCA",
+    "url": "https://www.esma.europa.eu/publications-data/questions-answers/2653",
+    "doc_type": "qa",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "ESMA Q&A 2067 - Treatment of staking services in MiCA",
+    "url": "https://www.esma.europa.eu/publications-data/questions-answers/2067",
+    "doc_type": "qa",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "ESMA Q&A 2295 - Status of entities providing crypto-asset services as part of the grandfathering regime (MiCA)",
+    "url": "https://www.esma.europa.eu/publications-data/questions-answers/2295",
+    "doc_type": "qa",
+    "authority": "ESMA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "EBA Guidelines on recovery plans under Articles 46 and 55 of Regulation (EU) 2023/1114 (MiCAR) - EBA/GL/2024/07 (Final Report)",
+    "url": "https://www.eba.europa.eu/sites/default/files/2024-06/a4619671-df54-42ff-a6d8-2819f51ebe83/Final%20report%20on%20Guidelines%20on%20recovery%20plans%20under%20MiCAR.pdf",
+    "doc_type": "guideline",
+    "authority": "EBA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "EBA Guidelines on redemption plans under Articles 47 and 55 of Regulation (EU) 2023/1114 (MiCAR) - EBA/GL/2024/13 (Final Report)",
+    "url": "https://www.eba.europa.eu/sites/default/files/2024-10/f8fda168-4d97-4549-9cfe-46d1d1a27636/Final%20report%20on%20Guidelines%20on%20redemption%20plans%20under%20MiCAR.pdf",
+    "doc_type": "guideline",
+    "authority": "EBA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "EBA Guidelines on liquidity stress testing of issuers of asset-referenced tokens and e-money tokens under MiCAR (Final Report)",
+    "url": "https://www.eba.europa.eu/sites/default/files/2024-06/2bd7add3-35b1-40d7-9c45-67c8cccbe97a/Final%20report%20on%20Guidelines%20on%20liquidity%20stress%20testing%20under%20MiCAR.pdf",
+    "doc_type": "guideline",
+    "authority": "EBA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "EBA Guidelines on internal governance arrangements for issuers of asset-referenced tokens under MiCAR - EBA/GL/2024/06 (Final Report)",
+    "url": "https://www.eba.europa.eu/sites/default/files/2024-06/611ef3d4-4d67-467f-bf0d-4c2b1dd0ef5e/Final%20report%20on%20draft%20Guidelines%20on%20internal%20governance%20of%20issuers%20of%20ARTs.pdf",
+    "doc_type": "guideline",
+    "authority": "EBA"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R0419",
+    "title": "Commission Delegated Regulation (EU) 2025/419 of 16 December 2024 supplementing Regulation (EU) 2023/1114 of the European Parliament and of the Council with regard to regulatory technical standards specifying the procedure and timeframe for an issuer of asset-referenced tokens or of e-money tokens to adjust the amount of its own funds",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R0419",
+    "doc_type": "rts",
+    "authority": "EBA"
+  },
+  {
+    "kind": "eurlex",
+    "celex": "32025R1264",
+    "title": "Commission Delegated Regulation (EU) 2025/1264 of 27 June 2025 supplementing Regulation (EU) 2023/1114 with regard to regulatory technical standards specifying the minimum contents of the liquidity management policy and procedures for certain issuers of asset-referenced tokens and e-money tokens",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32025R1264",
+    "doc_type": "rts",
+    "authority": "EBA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "EBA Consultation Paper - Draft RTS to further specify the liquidity requirements of the reserve of assets under Article 36(4) of MiCAR (Regulation (EU) 2023/1114)",
+    "url": "https://www.eba.europa.eu/sites/default/files/document_library/Publications/Consultations/2024/Consultation%20on%20RTS%20further%20specifying%20the%20liquidity%20requirements%20of%20the%20reserve%20of%20assets%20under%20MiCAR/1063471/CP%20RTS%20further%20specifying%20the%20liquidity%20requirements%20of%20the%20reserve%20of%20assets%20Article%2036(4)%20MiCAR.pdf",
+    "doc_type": "rts",
+    "authority": "EBA"
+  },
+  {
+    "kind": "pdf",
+    "celex": "",
+    "title": "EBA Single Rulebook Q&A tool - covers Regulation (EU) 2023/1114 (MiCAR) questions and answers",
+    "url": "https://www.eba.europa.eu/single-rule-book-qa",
+    "doc_type": "qa",
+    "authority": "EBA"
+  }
+]

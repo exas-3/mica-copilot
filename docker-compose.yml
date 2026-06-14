@@ -1,0 +1,23 @@
+# Self-contained Postgres + pgvector for the MiCA copilot.
+# `docker compose up -d` gives a grader a working vector store with no external setup.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: mica-copilot-db
+    environment:
+      POSTGRES_USER: mica
+      POSTGRES_PASSWORD: mica
+      POSTGRES_DB: mica
+    ports:
+      - "5433:5432"           # host 5433 -> container 5432 (matches DATABASE_URL in .env.example)
+    volumes:
+      - ./db/0001_init.sql:/docker-entrypoint-initdb.d/0001_init.sql:ro
+      - mica_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mica -d mica"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mica_pgdata:

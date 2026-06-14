@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Env / secrets — NEVER commit API keys
+.env
+.env.local
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+npm-debug.log*
+
+# Local model cache (fastembed downloads)
+.fastembed_cache/
+.cache/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Eval / runtime artifacts
+eval/results/*.json
+*.log
+
+# Stray source PDFs downloaded at the repo root (the doc PDF lives under docs/)
+/*.pdf

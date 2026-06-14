@@ -1,0 +1,13 @@
+{"question": "What must back the reserve of assets for an asset-referenced token?", "expected_articles": ["Article 36"], "kind": "answerable"}
+{"question": "Do holders of an asset-referenced token have a right of redemption?", "expected_articles": ["Article 39"], "kind": "answerable"}
+{"question": "Who is allowed to issue an e-money token in the EU?", "expected_articles": ["Article 48"], "kind": "answerable"}
+{"question": "Must an e-money token be redeemable at par value?", "expected_articles": ["Article 49"], "kind": "answerable"}
+{"question": "Can the issuer of an e-money token pay interest to holders?", "expected_articles": ["Article 50"], "kind": "answerable"}
+{"question": "What are a CASP's obligations when safekeeping clients' crypto-assets and funds?", "expected_articles": ["Article 70"], "kind": "answerable"}
+{"question": "Is authorisation required to provide crypto-asset services?", "expected_articles": ["Article 59"], "kind": "answerable"}
+{"question": "What goes into a crypto-asset white paper for an offer to the public?", "expected_articles": ["Article 5", "Article 4"], "kind": "answerable"}
+{"question": "How is an asset-referenced token defined under MiCA?", "expected_articles": ["Article 3"], "kind": "answerable"}
+{"question": "What conflicts-of-interest duties apply to a crypto-asset service provider?", "expected_articles": ["Article 72"], "kind": "answerable"}
+{"question": "Is insider dealing in crypto-assets prohibited?", "expected_articles": ["Article 89"], "kind": "answerable"}
+{"question": "What capital gains tax rate applies when I sell Bitcoin in Germany?", "expected_articles": [], "kind": "abstain"}
+{"question": "What does the EU AI Act say about facial recognition?", "expected_articles": [], "kind": "abstain"}
