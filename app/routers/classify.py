@@ -1,7 +1,7 @@
 """Structured classification endpoint — token/service → MiCA category as JSON."""
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
 from app.config import get_settings
@@ -13,11 +13,17 @@ from app.schemas import (
     ServiceMatch,
 )
 from app.services import llm
+from app.services.ratelimit import rate_limit
 
 router = APIRouter(tags=["classify"])
 
 
-@router.post("/classify", response_model=ClassifyResponse, summary="Classify a token/service under MiCA")
+@router.post(
+    "/classify",
+    response_model=ClassifyResponse,
+    summary="Classify a token/service under MiCA",
+    dependencies=[Depends(rate_limit)],
+)
 def classify(req: ClassifyRequest) -> ClassifyResponse:
     if not get_settings().has_claude:
         raise HTTPException(status_code=503, detail="ANTHROPIC_API_KEY not configured.")

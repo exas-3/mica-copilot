@@ -1,17 +1,22 @@
 """Chat endpoints — streaming (SSE) and synchronous (JSON)."""
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 
 from app.config import get_settings
 from app.schemas import ChatRequest, ChatResponse
 from app.services import llm
+from app.services.ratelimit import rate_limit
 
 router = APIRouter(tags=["chat"])
 
 
-@router.post("/chat", summary="Ask MiCA — streamed (Server-Sent Events)")
+@router.post(
+    "/chat",
+    summary="Ask MiCA — streamed (Server-Sent Events)",
+    dependencies=[Depends(rate_limit)],
+)
 def chat_stream(req: ChatRequest) -> StreamingResponse:
     """Stream the grounded answer as SSE.
 
@@ -30,7 +35,12 @@ def chat_stream(req: ChatRequest) -> StreamingResponse:
     )
 
 
-@router.post("/chat/sync", response_model=ChatResponse, summary="Ask MiCA — single JSON response")
+@router.post(
+    "/chat/sync",
+    response_model=ChatResponse,
+    summary="Ask MiCA — single JSON response",
+    dependencies=[Depends(rate_limit)],
+)
 def chat_sync(req: ChatRequest) -> ChatResponse:
     if not get_settings().has_claude:
         raise HTTPException(status_code=503, detail="ANTHROPIC_API_KEY not configured.")

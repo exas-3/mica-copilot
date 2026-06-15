@@ -45,6 +45,11 @@ export async function streamChat(
     return;
   }
   if (!res.ok || !res.body) {
+    if (res.status === 429) {
+      const detail = await res.json().catch(() => ({} as any));
+      handlers.onError(detail.detail || "Rate limit exceeded — too many requests. Please slow down and try again shortly.");
+      return;
+    }
     handlers.onError(`Backend error (${res.status}).`);
     return;
   }

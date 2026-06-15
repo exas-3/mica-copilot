@@ -68,6 +68,15 @@ class Settings(BaseSettings):
     news_press_minutes: int = 10        # press poll cadence (scheduler)
     news_regulators_hours: int = 6      # regulator poll cadence (scheduler)
 
+    # Rate limiting — the public AI endpoints (/chat, /chat/sync, /classify) each spend
+    # Anthropic credits, so they are throttled per client IP to cap abuse / cost-runaway.
+    # The real client IP comes from the Cloudflare / X-Forwarded-For header, since the
+    # backend only ever sees the Next.js same-origin proxy at 127.0.0.1. In-process
+    # sliding-window limiter shared across the three endpoints — see app/services/ratelimit.py.
+    rate_limit_enabled: bool = True
+    rate_limit_max: int = 20        # max requests per IP per window across the AI endpoints
+    rate_limit_window_s: int = 60   # window length in seconds
+
     # CORS
     cors_origins: str = "http://localhost:3000"
 
