@@ -6,10 +6,10 @@ services:
     container_name: mica-copilot-db
     environment:
       POSTGRES_USER: mica
-      POSTGRES_PASSWORD: mica
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mica}   # real value from .env (gitignored); 'mica' is the fresh-clone dev default
       POSTGRES_DB: mica
     ports:
-      - "5433:5432"           # host 5433 -> container 5432 (matches DATABASE_URL in .env.example)
+      - "127.0.0.1:5433:5432" # bind to localhost ONLY (never expose the DB on the LAN); host 5433 -> container 5432
     volumes:
       - ./db/0001_init.sql:/docker-entrypoint-initdb.d/0001_init.sql:ro
       - mica_pgdata:/var/lib/postgresql/data
