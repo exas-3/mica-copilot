@@ -172,25 +172,46 @@ Run `python -m eval.run --e2e --judge` (golden set in `eval/goldens.jsonl`). Met
 | `abstention_accuracy` | Did the agent decline on out-of-corpus questions? |
 | `faithfulness` | LLM-as-judge: is every claim supported by retrieved context? |
 
-**Measured run** (13 goldens; agent = Sonnet 4.6, judge = Haiku 4.5, embedder = local
-`mxbai-embed-large-v1`; **v2 935-chunk document corpus**):
+**Measured run** (**44 goldens** — 35 answerable, 6 abstain, 3 register; agent = Sonnet 4.6 at
+`effort=low`, judge = Haiku 4.5, embedder = local `mxbai-embed-large-v1`; v2 ≈1,400-chunk corpus):
 
 | Metric | Score |
 |---|---|
-| retrieval_hit@k | **0.727** |
-| citation_hit | **0.818** |
-| abstention_accuracy | **1.00** |
-| faithfulness | **0.818** |
+| retrieval_hit@k | **0.971** |
+| citation_hit | **0.914** |
+| abstention_accuracy | **1.000** |
+| faithfulness | **0.886** |
+| register_hit | **1.000** |
 
-Each golden expects one specific *regulation* article. Against the v2 corpus (which grew from 48
-summaries to **935 chunks of real full text** spanning the Regulation **and** the Level-2 RTS/ITS and
-ESMA/EBA guidelines), that exact article now competes with closely-related Level-2 provisions, so the
-strict exact-article hit is a little lower than against the old narrow summary corpus — while the
-answers are *richer* (they cite the RTS **and** the article). Abstention stays perfect and faithfulness
-holds. Qualitatively, the agent correctly: cited **Article 143** and the **1 July 2026** transitional
-deadline for the Binance query; identified **Commission Delegated Regulation (EU) 2025/294** as the
-complaints-handling RTS; and grounded a "recent enforcement" answer in dated news citations.
-(Full per-question detail: `eval/results/scorecard.json`.)
+The golden set was expanded from 29 to **44** to cover more of the Regulation — Title III ART
+authorisation (Art 16), Title IV EMT white paper (Art 51), Title V CASP authorisation / prudential /
+governance / outsourcing (Art 60, 62, 67, 68, 73) and the per-service rules (Art 76–81), plus the
+**Art 143 transitional period** — with extra out-of-scope (*abstain*) and *register* cases. The winning
+retrieval config (vector + mxbai query-prefix + Article-3 per-definition chunking + `also_accept` credit
+for the genuine Level-2 elaboration) reaches **retrieval_hit@k 0.971**; the one miss is Art 88, whose
+base provision ranks below the Level-2 ESMA market-abuse guidelines. **Faithfulness rose to 0.886** after
+the judge context was made *citation-aware* (it now also sees the exact provisions the answer cited, not
+just generic top-k retrieval — fixing a measurement artifact, not the answers). Abstention and the ESMA
+register lookup stay perfect on the larger set, including the new VAT/DORA out-of-scope questions and the
+MegaETH white-paper lookup. `citation_hit` (0.914) carries run-to-run variance from the stochastic agent
+— two of this run's three misses are goldens that pass on other runs (the agent sometimes cites a
+neighbouring article). Reproduce with `python -m eval.run --e2e --judge`; per-question detail in
+`eval/results/scorecard_improved.json`.
+
+### Web performance & accessibility (Lighthouse)
+
+Measured on the live production build (`mica.exadaktylos.xyz`):
+
+| Category | Desktop | Mobile |
+|---|---|---|
+| Performance | **100** | **98** |
+| Accessibility | **100** | **100** |
+| Best Practices | **100** | **100** |
+| SEO | **100** | **100** |
+
+Core Web Vitals (mobile): **LCP 2.3 s · CLS 0 · TBT 30 ms**. The production `next build` + the
+same-origin `/api` proxy keep LCP low and layout shift at zero; accessibility reached 100 after making
+in-text links distinguishable by underline (not colour alone).
 
 ## 9. Limitations & future extensions
 

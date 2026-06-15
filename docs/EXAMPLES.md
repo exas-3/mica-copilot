@@ -271,16 +271,18 @@ The UI points at `http://localhost:8000` by default — override with `NEXT_PUBL
 python -m eval.run --e2e --judge        # or: make eval
 ```
 
-Runs the golden set (`eval/goldens.jsonl`, 13 questions) end-to-end through the live agent and scores
-retrieval, citation, abstention, and (LLM-as-judge) faithfulness. Latest run (v2 935-chunk corpus,
-agent = Sonnet 4.6, judge = Haiku 4.5, embedder = local `mxbai-embed-large-v1`):
+Runs the golden set (`eval/goldens.jsonl`, **44 questions**) end-to-end through the live agent and scores
+retrieval, citation, abstention, register lookup, and (LLM-as-judge) faithfulness. Latest run
+(v2 ≈1,400-chunk corpus, agent = Sonnet 4.6 at `effort=low`, judge = Haiku 4.5, embedder = local
+`mxbai-embed-large-v1`):
 
 | Metric | Score |
 |---|---|
-| retrieval_hit@k | 0.727 |
-| citation_hit | 0.818 |
+| retrieval_hit@k | 0.971 |
+| citation_hit | 0.914 |
 | abstention_accuracy | 1.00 |
-| faithfulness | 0.818 |
+| faithfulness | 0.886 |
+| register_hit | 1.00 |
 
 Per-question detail is written to `eval/results/scorecard.json`. See
 [`DOCUMENTATION.md`](DOCUMENTATION.md) §8 for what each metric measures and why the strict exact-article

@@ -27,3 +27,18 @@
 {"question": "How does the GDPR define a data controller?", "expected_articles": [], "kind": "abstain"}
 {"question": "Does Cardano have a MiCA crypto-asset white paper, and what is its token?", "kind": "register", "query": "Cardano", "expect_contains": ["ADA"]}
 {"question": "Is Kraken registered as an authorised crypto-asset service provider in the EU?", "kind": "register", "query": "Kraken", "expect_contains": []}
+{"question": "Until when may firms that provided crypto-asset services before MiCA applied continue under the transitional period?", "expected_articles": ["Article 143"], "also_accept": ["Q&A 2295", "transitional", "Status of ent"], "kind": "answerable"}
+{"question": "Does an issuer need authorisation before offering an asset-referenced token to the public?", "expected_articles": ["Article 16"], "kind": "answerable"}
+{"question": "What must the crypto-asset white paper for an e-money token contain?", "expected_articles": ["Article 51"], "kind": "answerable"}
+{"question": "Can a credit institution provide crypto-asset services without a separate CASP authorisation?", "expected_articles": ["Article 60"], "kind": "answerable"}
+{"question": "What must an application for authorisation as a crypto-asset service provider include?", "expected_articles": ["Article 62"], "kind": "answerable"}
+{"question": "What prudential own-funds requirements must a crypto-asset service provider meet?", "expected_articles": ["Article 67"], "kind": "answerable"}
+{"question": "What governance arrangements must a crypto-asset service provider have in place?", "expected_articles": ["Article 68"], "kind": "answerable"}
+{"question": "Can a crypto-asset service provider outsource functions to third parties?", "expected_articles": ["Article 73"], "kind": "answerable"}
+{"question": "What rules apply to operating a trading platform for crypto-assets?", "expected_articles": ["Article 76"], "kind": "answerable"}
+{"question": "What must a crypto-asset service provider exchanging crypto-assets for funds do on pricing?", "expected_articles": ["Article 77"], "kind": "answerable"}
+{"question": "What is a CASP's best-execution duty when executing client orders for crypto-assets?", "expected_articles": ["Article 78"], "kind": "answerable"}
+{"question": "What must a CASP assess before providing advice on crypto-assets to a client?", "expected_articles": ["Article 81"], "kind": "answerable"}
+{"question": "What is the VAT treatment of crypto-asset transactions in the EU?", "expected_articles": [], "kind": "abstain"}
+{"question": "How does the EU DORA regulation define an ICT third-party service provider?", "expected_articles": [], "kind": "abstain"}
+{"question": "Does MegaETH have a MiCA crypto-asset white paper in the ESMA registers?", "kind": "register", "query": "MegaETH", "expect_contains": []}

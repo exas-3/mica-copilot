@@ -229,11 +229,11 @@ a:hover { text-decoration: underline; }
 }
 .site-footer-note strong { color: var(--ink-2); }
 .site-footer-links { display: flex; gap: 18px; }
-.site-footer-links a { color: var(--ink-2); }
+.site-footer-links a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
 .site-footer-links a:hover { color: var(--accent); }
 
 .composer-note { margin: 10px 2px 0; font-size: 12px; color: var(--ink-3); line-height: 1.5; }
-.composer-note a { color: var(--accent); }
+.composer-note a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
 .legal-page { max-width: 820px; margin: 0 auto; }
 .legal.md { padding: 28px 34px; }

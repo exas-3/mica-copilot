@@ -150,7 +150,7 @@ evaluation results.
 - **Docs index:** [`docs/README.md`](docs/README.md)
 - **Architecture diagram:** [`docs/architecture.svg`](docs/architecture.svg)
 - **Evaluation harness:** `python -m eval.run --e2e --judge` (or `make eval`)
-  — measured (v2 935-chunk corpus): retrieval 0.73 · citation 0.82 · abstention 1.00 · faithfulness 0.82 (13 goldens, Sonnet 4.6)
+  — measured (v2 ≈1,400-chunk corpus, 44 goldens, Sonnet 4.6): retrieval 0.97 · citation 0.91 · abstention 1.00 · faithfulness 0.89 · register 1.00. Lighthouse (prod): Performance/Accessibility/Best-Practices/SEO = 100/100/100/100 desktop.
 - **License:** [MIT](LICENSE).
 
 ---

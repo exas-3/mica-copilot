@@ -56,17 +56,50 @@ def retrieval_hit(g: dict) -> bool:
     return _match(g, raw)
 
 
-def judge_context(question: str, k: int = 15) -> str:
+def _chunks_for_refs(refs: list[str]) -> list[dict]:
+    """Fetch the reg_chunks for specific article references, so the faithfulness judge sees the
+    exact provisions the answer *cited* — not just generic top-k retrieval for the question."""
+    from app.db import get_conn
+
+    wanted = sorted({r.strip() for r in refs if r and r.strip()})
+    if not wanted:
+        return []
+    out: list[dict] = []
+    try:
+        with get_conn() as conn:
+            for ref in wanted:
+                base = ref.split("(")[0].strip()
+                rows = conn.execute(
+                    "SELECT article_ref, title, chunk_text, source_url FROM reg_chunks "
+                    "WHERE article_ref = %s OR article_ref = %s OR article_ref ILIKE %s "
+                    "ORDER BY chunk_index LIMIT 3",
+                    (ref, base, base + "(%"),
+                ).fetchall()
+                out += [{"article_ref": r[0], "title": r[1], "chunk_text": r[2], "source_url": r[3]} for r in rows]
+    except Exception:  # noqa: BLE001 — judge context is best-effort
+        pass
+    return out
+
+
+def judge_context(question: str, cited_refs: list[str] | None = None, k: int = 12) -> str:
     """Build a *generous* context for the faithfulness judge — more chunks than the answer
-    pipeline hands the model. Faithfulness asks 'is the answer grounded in the corpus?',
-    so the judge should see the relevant provision in full; with small chunks a single
-    article is split across several, and a top-6 judge context would unfairly miss pieces.
+    pipeline hands the model. Faithfulness asks 'is the answer grounded in the corpus?', so the
+    judge should see the relevant provisions in full. We combine top-k retrieval for the question
+    with the exact chunks the answer *cited* (so a correctly-cited provision that ranks below the
+    top-k is not unfairly judged 'unsupported').
     """
     from app.rag.embed import get_embedder
     from app.rag.store import search_hybrid
 
     vec = get_embedder().embed_query(question)
-    return rag.build_context(search_hybrid(question, vec, k))
+    chunks = search_hybrid(question, vec, k)
+    if cited_refs:
+        have = {c.get("article_ref") for c in chunks}
+        for c in _chunks_for_refs(cited_refs):
+            if c["article_ref"] not in have:
+                chunks.append(c)
+                have.add(c["article_ref"])
+    return rag.build_context(chunks)
 
 
 def judge_faithfulness(question: str, answer: str, context: str) -> bool:
@@ -214,7 +247,7 @@ def main() -> None:
                 cite_hits += int(c_hit)
                 row["citation_hit"] = c_hit
                 if args.judge and result.get("citations"):
-                    ctx = judge_context(g["question"])
+                    ctx = judge_context(g["question"], cited_refs=cited_raw)
                     f = judge_faithfulness(g["question"], result["answer"], ctx)
                     faithful_ok += int(f)
                     judged += 1

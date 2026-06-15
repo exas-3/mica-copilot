@@ -153,21 +153,22 @@ avg tokens/query, output share, and the cache-read ratio for before/after compar
 
 ## 10. Evaluation methodology
 
-`python -m eval.run [--e2e] [--judge]` against **`eval/goldens.jsonl` — 13 hand-curated cases** (11
-*answerable* with an expected article, 2 *abstain* / out-of-corpus). Three modes: retrieval-only (no key),
-`--e2e` (full agent loop), `--e2e --judge` (adds the LLM judge).
+`python -m eval.run [--e2e] [--judge]` against **`eval/goldens.jsonl` — 44 hand-curated cases** (35
+*answerable* with an expected article, 6 *abstain* / out-of-corpus, 3 *register*). Three modes:
+retrieval-only (no key), `--e2e` (full agent loop), `--e2e --judge` (adds the LLM judge).
 
 | Metric | Definition | Measured |
 |---|---|---|
-| `retrieval_hit@k` | does an expected article appear in the `return_k = 6` retrieved chunks? | **0.727** |
-| `citation_hit` | did the agent's answer actually **cite** an expected article? (`--e2e`) | **0.818** |
+| `retrieval_hit@k` | does an expected article (or its accepted Level-2 elaboration) appear in the `return_k = 6` retrieved chunks? | **0.971** |
+| `citation_hit` | did the agent's answer actually **cite** an expected article? (`--e2e`) | **0.914** |
 | `abstention_accuracy` | on out-of-corpus questions, did it abstain (`grounded=false` / no citations)? | **1.000** |
-| `faithfulness` | LLM judge (`claude-haiku-4-5`, one-word *SUPPORTED/UNSUPPORTED*) over the retrieved context | **0.818** |
+| `faithfulness` | LLM judge (`claude-haiku-4-5`) over a *citation-aware* context (top-k + the cited provisions) | **0.886** |
+| `register_hit` | does the ESMA-register lookup find the expected entity/token? | **1.000** |
 
-(Agent `claude-sonnet-4-6`, embedder local mxbai, v2 ~935-chunk corpus; per-question rows in
-`eval/results/scorecard.json`.) The strict *exact-article* retrieval score is a little lower against the
-richer Level-2 corpus because the expected article now competes with closely-related RTS provisions — the
-answers are *richer* (they cite the RTS **and** the article) while abstention stays perfect.
+(Agent `claude-sonnet-4-6` at `effort=low`, embedder local mxbai, v2 ≈1,400-chunk corpus; per-question
+rows in `eval/results/scorecard_improved.json`.) Faithfulness is judged against the provisions the answer
+*cited* (not just generic top-k), which fixed a measurement artifact; `citation_hit` carries some
+run-to-run variance from the stochastic agent.
 
 **What the eval does *not* cover (by design, and honestly):** the `search_news`, `lookup_register` and
 `check_enforcement` tools; the `/classify` endpoint; multi-turn chat; and latency/cost. The judge is a
