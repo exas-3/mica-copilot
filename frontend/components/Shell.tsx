@@ -29,7 +29,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <main className="main">{children}</main>
       <footer className="site-footer">
         <span className="site-footer-note">
-          A final project for the AUEB <em>“AI for Developers”</em> course · educational tool,
+          A final project for the AUEB <em>“AI for Developers: Design, Build, Deploy LLM-powered
+          Applications”</em> course · educational tool,
           answers are AI-generated and <strong>not legal advice</strong>.
         </span>
         <nav className="site-footer-links">

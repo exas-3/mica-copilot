@@ -1,7 +1,7 @@
 # MiCA Compliance Copilot
 
 > 🎓 **Final project for the Athens University of Economics and Business (AUEB)
-> *“AI for Developers — Building with LLMs”* course.**
+> *“AI for Developers: Design, Build, Deploy LLM-powered Applications”* course.**
 
 A small but complete **GenAI application**: a Retrieval-Augmented + agentic assistant for
 the EU **Markets in Crypto-Assets Regulation** (Regulation (EU) 2023/1114, "MiCA").

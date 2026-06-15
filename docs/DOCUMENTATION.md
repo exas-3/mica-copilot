@@ -1,6 +1,6 @@
 # MiCA Compliance Copilot — Documentation
 
-**Course:** AI for Developers — Building with Large Language Models (AUEB).
+**Course:** AI for Developers: Design, Build, Deploy LLM-powered Applications (AUEB).
 **Type:** Generative-AI application — *not a chatbot*: AI logic embedded in a clean
 software architecture (FastAPI backend + functional UI + GenAI layer).
 
@@ -229,7 +229,7 @@ curl -s localhost:8000/classify -H 'content-type: application/json' \
 
 ## 11. Deliverables mapping (assignment checklist)
 
-How this project satisfies each requirement of the *AI for Developers — Building with LLMs* brief:
+How this project satisfies each requirement of the *AI for Developers: Design, Build, Deploy LLM-powered Applications* brief:
 
 | Requirement | Where it lives |
 |---|---|

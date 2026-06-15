@@ -31,7 +31,7 @@ export default function Page() {
         </p>
         <p className="page-credit">
           A final project for the Athens University of Economics and Business (AUEB)
-          <em> “AI for Developers — Building with LLMs”</em> course.
+          <em> “AI for Developers: Design, Build, Deploy LLM-powered Applications”</em> course.
         </p>
       </div>
       <Chat />
