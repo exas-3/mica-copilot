@@ -39,12 +39,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <Link href="/terms">Terms</Link>
         </nav>
       </footer>
-      {!path.startsWith("/docs") && (
-        <Link href="/docs" className="docs-fab" aria-label="Open documentation">
-          <span className="docs-fab-icon" aria-hidden>📘</span>
-          Docs
-        </Link>
-      )}
     </div>
   );
 }

@@ -187,16 +187,6 @@ a:hover { text-decoration: underline; }
 .section-label { font-weight: 600; font-size: 14px; margin: 18px 0 8px; }
 
 /* ── Docs UI (/docs) ──────────────────────────────────────────────────────── */
-.docs-fab {
-  position: fixed; right: 24px; bottom: 76px; z-index: 30;  /* clears the footer bar */
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 11px 18px; border-radius: 999px;
-  background: var(--accent); color: #fff; font-size: 14px; font-weight: 550;
-  box-shadow: var(--shadow); border: 1px solid #16335f;
-}
-.docs-fab:hover { text-decoration: none; background: #16335f; }
-.docs-fab-icon { font-size: 16px; line-height: 1; }
-
 .docs-grid { display: grid; grid-template-columns: 260px 1fr; gap: 22px; align-items: start; }
 .docs-aside { position: sticky; top: 84px; padding: 16px; }
 .docs-nav { display: flex; flex-direction: column; gap: 4px; }
