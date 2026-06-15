@@ -37,17 +37,19 @@
 
   <!-- Tools -->
   <rect class="box" x="492" y="190" width="200" height="120" fill="#fbf1e9"/>
-  <text class="t" x="510" y="216">Agent tools</text>
-  <text class="s" x="510" y="238">search_regulation (RAG)</text>
-  <text class="s" x="510" y="256">lookup_register</text>
-  <text class="s" x="510" y="274">check_enforcement</text>
+  <text class="t" x="510" y="214">Agent tools</text>
+  <text class="s" x="510" y="234">search_regulation (docs)</text>
+  <text class="s" x="510" y="252">search_news (full-text)</text>
+  <text class="s" x="510" y="270">lookup_register</text>
+  <text class="s" x="510" y="288">check_enforcement</text>
 
   <!-- KB -->
   <rect class="box" x="744" y="120" width="150" height="120" fill="#fdf7e6"/>
-  <text class="t" x="760" y="148">Postgres</text>
-  <text class="s" x="760" y="170">+ pgvector</text>
-  <text class="s" x="760" y="192">reg_chunks</text>
-  <text class="s" x="760" y="210">register snapshot</text>
+  <text class="t" x="760" y="146">Postgres</text>
+  <text class="s" x="760" y="166">+ pgvector</text>
+  <text class="s" x="760" y="186">reg_chunks · news_chunks</text>
+  <text class="s" x="760" y="204">register snapshot</text>
+  <text class="s" x="760" y="222">chat_logs (write-only)</text>
 
   <!-- arrows -->
   <path class="arr" d="M194,170 L246,170"/>

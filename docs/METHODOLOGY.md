@@ -87,8 +87,10 @@ documents, **by `source_url`** for news (each with a ~200-char snippet, `doc_typ
 ## 6. The agent & tool routing
 
 `app/services/llm.py` runs a **manual agentic loop** (`claude-sonnet-4-6`; adaptive thinking, `effort:
-medium`; up to **5 tool iterations**; `max_tokens` 4096 chat / 2048 classify). The model chooses among
-four tools, each with a prescriptive *when-to-call* description (`app/agents/tools.py`):
+low` by default for cost/latency — configurable; up to **5 tool iterations**; `max_tokens` 1536 chat /
+2048 classify; `/classify` is routed to **Haiku 4.5**, and each turn accumulates a token-`usage` record).
+The model chooses among four tools, each with a prescriptive *when-to-call* description
+(`app/agents/tools.py`):
 
 | Tool | Call it for | Reads |
 |---|---|---|
@@ -165,8 +167,8 @@ retrieval-only (no key), `--e2e` (full agent loop), `--e2e --judge` (adds the LL
 | `faithfulness` | LLM judge (`claude-haiku-4-5`) over a *citation-aware* context (top-k + the cited provisions) | **0.886** |
 | `register_hit` | does the ESMA-register lookup find the expected entity/token? | **1.000** |
 
-(Agent `claude-sonnet-4-6` at `effort=low`, embedder local mxbai, v2 ≈1,400-chunk corpus; per-question
-rows in `eval/results/scorecard_improved.json`.) Faithfulness is judged against the provisions the answer
+(Agent `claude-sonnet-4-6` at `effort=low`, embedder local mxbai, v2 corpus = 1,422 regulation chunks
+(+63 news), 1,258 register rows; per-question rows in `eval/results/scorecard_improved.json`.) Faithfulness is judged against the provisions the answer
 *cited* (not just generic top-k), which fixed a measurement artifact; `citation_hit` carries some
 run-to-run variance from the stochastic agent.
 

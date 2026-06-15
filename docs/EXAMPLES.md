@@ -27,9 +27,9 @@ curl -s localhost:8000/health | jq
   "status": "ok",
   "claude_configured": true,
   "embedder": "local",
-  "chunks_indexed": 935,
-  "news_indexed": 212,
-  "register_rows": 4730
+  "chunks_indexed": 1422,
+  "news_indexed": 63,
+  "register_rows": 1258
 }
 ```
 
@@ -78,6 +78,9 @@ curl -s localhost:8000/chat/sync -H 'content-type: application/json' \
   carry `article_ref` + `doc_type`, news carry `source_name` + `published_at`.
 - `tool_events[]` — the agent's tool-use trace (which tools it called and why).
 - `grounded` — `false` means the agent abstained (see §5).
+- `model` + `usage` — the response also returns the model id (`claude-sonnet-4-6`) and the per-turn
+  token `usage` (`input_tokens` / `output_tokens` / `cache_creation_input_tokens` / `cache_read_input_tokens`),
+  the same payload the streaming endpoint emits as a `usage` event.
 
 ### Routing examples (one request each)
 
@@ -123,8 +126,14 @@ data: {"type": "token", "text": "Article 39, holders have a permanent right of r
 
 data: {"type": "citations", "citations": [ { "kind": "document", "article_ref": "Article 39", "...": "..." } ], "grounded": true}
 
+data: {"type": "usage", "model": "claude-sonnet-4-6", "usage": {"input_tokens": 4073, "output_tokens": 643, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 6371}}
+
 data: {"type": "done"}
 ```
+
+> The stream opens with a ~2 KB SSE comment "primer" (`: ` followed by spaces) to flush intermediate
+> proxy buffers, and emits `: keep-alive` comments between tool-loops so the connection isn't dropped.
+> SSE comment lines (starting with `:`) carry no event and are ignored by `EventSource` clients.
 
 **Event types** (`type` field):
 
@@ -135,6 +144,7 @@ data: {"type": "done"}
 | `reset` | — | Discard any streamed text so far (a pre-tool preamble; the final answer follows). |
 | `thought` | `text` | The discarded preamble, surfaced separately as the agent's "thinking" (optional to render). |
 | `citations` | `citations[]`, `grounded` | The sources cited + the grounded flag. |
+| `usage` | `model`, `usage` (`input_tokens` / `output_tokens` / `cache_creation_input_tokens` / `cache_read_input_tokens`) | Per-turn token usage, emitted just before `done`. |
 | `done` | — | Stream complete. |
 | `error` | `message` | Something failed; stop reading. |
 
@@ -251,7 +261,8 @@ cd frontend && npm install && npm run dev      # http://localhost:3000
 ```
 
 - **Ask MiCA** (`/`) — type a question; tool calls appear as chips ("Searched MiCA corpus", "Searched
-  news"), the answer streams token-by-token, and a **Citations** panel groups sources into
+  news"), the answer streams token-by-token and renders as **Markdown** (bold, lists, tables, code,
+  links), and a **Citations** panel groups sources into
   **Regulation & documents** (article + EUR-Lex/PDF link) and **News** (outlet + date + link). Example
   prompts are one click away so a reviewer can hit every path:
   - *"What must back the reserve of an asset-referenced token?"* → regulation
@@ -259,6 +270,10 @@ cd frontend && npm install && npm run dev      # http://localhost:3000
   - *"What are the tax rules for crypto in Greece?"* → abstains
 - **Classify** (`/classify`) — paste a token/service description → a structured card (asset type, the
   a–j services, the obligations each tied to an article, and citations).
+- **Guides** (`/guides`) — four cited MiCA explainers: ART, EMT vs. stablecoin, CASP authorisation,
+  white-paper requirements.
+- **Docs** (`/docs`) — an in-app documentation reader.
+- **Privacy** (`/privacy`) and **Terms** (`/terms`) — the privacy policy and terms of use.
 
 The UI points at `http://localhost:8000` by default — override with `NEXT_PUBLIC_API_URL` (see
 `frontend/.env.local.example`).
@@ -273,8 +288,8 @@ python -m eval.run --e2e --judge        # or: make eval
 
 Runs the golden set (`eval/goldens.jsonl`, **44 questions**) end-to-end through the live agent and scores
 retrieval, citation, abstention, register lookup, and (LLM-as-judge) faithfulness. Latest run
-(v2 ≈1,400-chunk corpus, agent = Sonnet 4.6 at `effort=low`, judge = Haiku 4.5, embedder = local
-`mxbai-embed-large-v1`):
+(v2 corpus: 1,422 regulation + 63 news chunks, 1,258 register rows; agent = Sonnet 4.6 at `effort=low`,
+judge = Haiku 4.5, embedder = local `mxbai-embed-large-v1`):
 
 | Metric | Score |
 |---|---|

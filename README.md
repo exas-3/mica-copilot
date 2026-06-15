@@ -14,6 +14,8 @@ answer when the indexed corpus doesn't support a grounded answer.
 > Architecture:
 > **FastAPI backend + Next.js UI + Claude (RAG · agents · tool-calling · structured outputs · prompt caching)**.
 
+**Live demo:** https://mica.exadaktylos.xyz · **GitHub:** https://github.com/exas-3/mica-copilot (public, MIT).
+
 ![architecture](docs/architecture.svg)
 
 ---
@@ -83,14 +85,26 @@ uvicorn app.main:app --reload --port 8000
 
 ## 4. Run the UI
 
+**Development**
+
 ```bash
 cd frontend
 npm install
 npm run dev            # http://localhost:3000
 ```
 
-The UI calls the backend at `http://localhost:8000` by default (override with
-`NEXT_PUBLIC_API_URL`, see `frontend/.env.local.example`).
+**Production**
+
+```bash
+cd frontend
+npm run build
+npm start              # http://localhost:3000 (production build)
+```
+
+**API routing.** The UI calls `/api/*` **same-origin**; Next.js rewrites (`next.config.mjs`) forward
+those to the FastAPI backend (`http://127.0.0.1:8000`; `BACKEND_ORIGIN` env in production) — so there is
+**no CORS** and a single tunnelled host. See [`deploy/TUNNEL.md`](deploy/TUNNEL.md) for the public
+deployment (Cloudflare Tunnel + systemd services).
 
 ### Screenshots
 
@@ -137,6 +151,7 @@ UI ──HTTP/SSE──▶ FastAPI ──▶ Claude agent loop ──▶ tools �
   back, answers **only** from retrieved sources (citing each, with dates for news), and abstains otherwise.
 - **Structured classification** (`/classify`): RAG-grounded, then constrained to a JSON schema.
 - **Prompt caching:** the stable system prompt carries `cache_control`; per-question context follows it.
+- **Markdown answers:** assistant answers are rendered via `react-markdown` + `remark-gfm` (lists, bold, code, links).
 
 See `docs/DOCUMENTATION.md` for the full architecture, data flow, prompt design, and
 evaluation results.
@@ -150,7 +165,7 @@ evaluation results.
 - **Docs index:** [`docs/README.md`](docs/README.md)
 - **Architecture diagram:** [`docs/architecture.svg`](docs/architecture.svg)
 - **Evaluation harness:** `python -m eval.run --e2e --judge` (or `make eval`)
-  — measured (v2 ≈1,400-chunk corpus, 44 goldens, Sonnet 4.6): retrieval 0.97 · citation 0.91 · abstention 1.00 · faithfulness 0.89 · register 1.00. Lighthouse (prod): Performance/Accessibility/Best-Practices/SEO = 100/100/100/100 desktop.
+  — measured (v2 corpus: 1,422 regulation + 63 news chunks, 1,258 register rows; 44 goldens, Sonnet 4.6): retrieval 0.971 · citation 0.914 · abstention 1.00 · faithfulness 0.886 · register 1.00. Lighthouse (prod): desktop 100/100/100/100, mobile 98/100/100/100, CLS 0.
 - **License:** [MIT](LICENSE).
 
 ---

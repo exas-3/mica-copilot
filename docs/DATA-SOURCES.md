@@ -20,7 +20,8 @@ All outbound fetches identify themselves honestly with an educational, non-comme
 ## 1. Official document corpus → `reg_chunks`
 
 The manifest is **`data/document_sources.json` — 34 curated sources**, fetched into ~300 article/section
-records (`data/document_corpus.jsonl`) and chunked into **~935 vectors** in `reg_chunks`.
+records (`data/document_corpus.jsonl`) and chunked into **1,422 regulation chunks** in `reg_chunks`
+(plus **63 news chunks** in `news_chunks`; see § 2).
 
 | Instrument type (`doc_type`) | Count | Examples (CELEX / id) |
 |---|---|---|
