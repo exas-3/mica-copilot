@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { DOCS } from "@/lib/docs";
 import { DocsSidebar } from "@/components/DocsSidebar";
+
+export const metadata: Metadata = {
+  title: "Documentation — Architecture, Data Sources & Methodology",
+  description:
+    "Technical documentation for the MiCA Compliance Copilot: architecture, the RAG pipeline and retrieval, data sources, evaluation methodology, and usage examples.",
+};
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   const items = DOCS.map(({ slug, title, blurb }) => ({ slug, title, blurb }));

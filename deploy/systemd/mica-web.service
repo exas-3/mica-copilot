@@ -1,5 +1,5 @@
 [Unit]
-Description=MiCA Copilot — Next.js frontend (:3000)
+Description=MiCA Copilot — Next.js frontend (:3000, production)
 After=network-online.target mica-api.service
 Wants=network-online.target
 StartLimitIntervalSec=0
@@ -9,10 +9,13 @@ Type=simple
 WorkingDirectory=/home/work/mica-copilot/frontend
 # mise-managed node/npm: shims must be on PATH so npm can resolve node.
 Environment=PATH=/home/work/.local/share/mise/shims:/home/work/.local/bin:/usr/local/bin:/usr/bin:/bin
-ExecStart=/home/work/.local/share/mise/shims/npm run dev
-# Production alternative (recommended for a public demo — faster, no dev overlay):
-#   build once with `npm run build`, then swap the line above for:
-#   ExecStart=/home/work/.local/share/mise/shims/npm run start
+Environment=NODE_ENV=production
+# A build can take a bit; don't let systemd time out the start.
+TimeoutStartSec=300
+# Build the optimized production bundle, then serve it (far better Core Web Vitals than `next dev`).
+# Rebuilds on each (re)start so it self-heals; future code changes need `systemctl --user restart mica-web`.
+ExecStartPre=/home/work/.local/share/mise/shims/npm run build
+ExecStart=/home/work/.local/share/mise/shims/npm run start
 Restart=always
 RestartSec=3
 

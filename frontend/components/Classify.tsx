@@ -56,9 +56,9 @@ export function Classify() {
         </div>
         <div className="examples">
           {EXAMPLES.map((ex) => (
-            <span key={ex} className="example" onClick={() => { setText(ex); run(ex); }}>
+            <button type="button" key={ex} className="example" onClick={() => { setText(ex); run(ex); }}>
               {ex.slice(0, 52)}…
-            </span>
+            </button>
           ))}
         </div>
       </div>

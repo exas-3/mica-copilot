@@ -150,7 +150,8 @@ a:hover { text-decoration: underline; }
 
 .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .example {
-  font-size: 13px; color: var(--ink-2); background: var(--surface); border: 1px solid var(--rule-2);
+  font-family: inherit; font-size: 13px; text-align: left; color: var(--ink-2);
+  background: var(--surface); border: 1px solid var(--rule-2);
   padding: 6px 11px; border-radius: 999px; cursor: pointer;
 }
 .example:hover { border-color: var(--accent); color: var(--accent); }
@@ -266,3 +267,16 @@ a:hover { text-decoration: underline; }
 
 .page-credit { margin-top: 8px; font-size: 13px; color: var(--ink-3); }
 .page-credit em { color: var(--ink-2); font-style: italic; }
+
+/* ── Guides index ─────────────────────────────────────────────────────────── */
+.guide-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 760px) { .guide-list { grid-template-columns: 1fr; } }
+.guide-card {
+  display: flex; flex-direction: column; gap: 6px; padding: 16px 18px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  box-shadow: var(--shadow); color: var(--ink-2);
+}
+.guide-card:hover { text-decoration: none; border-color: var(--accent); }
+.guide-card-title { font-family: var(--font-serif), Georgia, serif; font-size: 19px; color: var(--ink); line-height: 1.25; }
+.guide-card:hover .guide-card-title { color: var(--accent); }
+.guide-card-desc { font-size: 13px; color: var(--ink-3); line-height: 1.5; }

@@ -1,8 +1,26 @@
 import { Chat } from "@/components/Chat";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE_URL, SITE_NAME, SITE_DESC } from "@/lib/site";
+
+const WEBAPP = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: SITE_NAME,
+  url: SITE_URL,
+  description: SITE_DESC,
+  applicationCategory: "EducationalApplication",
+  operatingSystem: "Web",
+  isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+  creator: { "@id": `${SITE_URL}/#person` },
+  publisher: { "@id": `${SITE_URL}/#org` },
+  inLanguage: "en",
+};
 
 export default function Page() {
   return (
     <div>
+      <JsonLd data={WEBAPP} />
       <div className="page-header">
         <div className="eyebrow">Retrieval-augmented · agentic · cited</div>
         <h1>Ask MiCA</h1>

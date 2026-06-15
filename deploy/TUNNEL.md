@@ -108,7 +108,7 @@ set to `--restart unless-stopped` and `docker.service` is enabled at boot.
 | Unit | What | Restart |
 |---|---|---|
 | `mica-api.service` | `uvicorn app.main:app` on `127.0.0.1:8000` | always |
-| `mica-web.service` | `npm run dev` (Next.js) on `:3000` | always |
+| `mica-web.service` | `npm run build` then `npm run start` (Next.js production) on `:3000` | always |
 | `mica-tunnel.service` | `cloudflared tunnel run` (token from `~/.cloudflared/tunnel.env`, 0600) | always |
 
 Install / manage:
@@ -126,6 +126,9 @@ systemctl --user restart mica-api           # manual restart
 ```
 Crash → systemd respawns in ≤5s. Reboot → linger + `enabled` bring all three up (uvicorn retries
 until the DB container is ready). Verified by `SIGKILL`-ing each process and confirming respawn.
+
+`mica-web` runs a **production build** (`ExecStartPre=npm run build`, then `npm run start`) for Core
+Web Vitals — so a code change needs `systemctl --user restart mica-web` to rebuild (no hot reload).
 
 ## Teardown
 ```bash

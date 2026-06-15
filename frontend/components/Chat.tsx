@@ -106,6 +106,7 @@ export function Chat() {
             <input
               value={input}
               placeholder="Ask about MiCA…"
+              aria-label="Ask a question about MiCA"
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send(input)}
               disabled={busy}
@@ -125,9 +126,9 @@ export function Chat() {
           {messages.length === 0 && (
             <div className="examples">
               {EXAMPLES.map((ex) => (
-                <span key={ex} className="example" onClick={() => send(ex)}>
+                <button type="button" key={ex} className="example" onClick={() => send(ex)}>
                   {ex}
-                </span>
+                </button>
               ))}
             </div>
           )}

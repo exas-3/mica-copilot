@@ -54,13 +54,13 @@ const heading =
 
 export function DocsContent({ content }: { content: string }) {
   return (
-    <div className="md docs-md">
+    <article className="md docs-md">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
           a: ({ node, href, children, ...props }) => {
             const r = rewriteHref(href);
-            const ext = r.external ? { target: "_blank", rel: "noreferrer" } : {};
+            const ext = r.external ? { target: "_blank", rel: "noopener noreferrer" } : {};
             return (
               <a href={r.href} {...ext} {...props}>
                 {children}
@@ -69,7 +69,13 @@ export function DocsContent({ content }: { content: string }) {
           },
           // eslint-disable-next-line @next/next/no-img-element
           img: ({ node, src, alt, ...props }) => (
-            <img src={rewriteImg(typeof src === "string" ? src : "")} alt={alt || ""} loading="lazy" {...props} />
+            <img
+              src={rewriteImg(typeof src === "string" ? src : "")}
+              alt={alt || "MiCA Copilot documentation screenshot"}
+              loading="lazy"
+              decoding="async"
+              {...props}
+            />
           ),
           h1: heading("h1"),
           h2: heading("h2"),
@@ -79,6 +85,6 @@ export function DocsContent({ content }: { content: string }) {
       >
         {content}
       </ReactMarkdown>
-    </div>
+    </article>
   );
 }

@@ -9,16 +9,18 @@ import remarkGfm from "remark-gfm";
 export function LegalDoc({
   title,
   updated,
+  eyebrow = "LEGAL",
   children,
 }: {
   title: string;
   updated: string;
+  eyebrow?: string;
   children: string;
 }) {
   return (
     <div className="legal-page">
       <div className="page-header">
-        <div className="eyebrow">LEGAL</div>
+        <div className="eyebrow">{eyebrow}</div>
         <h1>{title}</h1>
         <p className="muted">Last updated: {updated}</p>
       </div>

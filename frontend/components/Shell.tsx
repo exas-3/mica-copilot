@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const NAV = [
   { href: "/", label: "Ask MiCA" },
   { href: "/classify", label: "Classify" },
+  { href: "/guides", label: "Guides" },
 ];
 
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -32,6 +33,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           answers are AI-generated and <strong>not legal advice</strong>.
         </span>
         <nav className="site-footer-links">
+          <Link href="/guides">Guides</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
