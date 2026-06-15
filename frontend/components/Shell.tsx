@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { REPO_URL } from "@/lib/site";
 
 const NAV = [
   { href: "/", label: "Ask MiCA" },
@@ -38,6 +39,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
+          <a href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         </nav>
       </footer>
     </div>
