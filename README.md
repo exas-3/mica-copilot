@@ -16,6 +16,14 @@ answer when the indexed corpus doesn't support a grounded answer.
 
 **Live demo:** https://mica.exadaktylos.xyz · **GitHub:** https://github.com/exas-3/mica-copilot (public, MIT).
 
+> **Sibling project — [MiCA Dashboard](https://github.com/exas-3/mica-dashboard).** This copilot is the
+> *RAG + agentic Q&A* half of a two-part MiCA suite; the **MiCA Dashboard** is the *data + visualisation*
+> half (ESMA-register intelligence, euro-stablecoin supply & reserve tracking, MiFID/FIRDS crosswalk).
+> The copilot reuses two things from it: (1) its **warm-paper / EU-blue design system** (the hand-rolled
+> CSS tokens, ported into this UI — no Tailwind), and (2) its **news-ingestion pipeline** (full-text RSS
+> fetch + Claude Haiku relevance triage + recency-weighted retrieval), which this app mirrors for its
+> news corpus. The two also share infrastructure (the same host and the Telegram alerting bot).
+
 ![architecture](docs/architecture.svg)
 
 ---
