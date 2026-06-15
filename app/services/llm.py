@@ -183,6 +183,15 @@ def _sse(event: dict) -> str:
     return f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
 
 
+# A large SSE *comment* (a line starting with ":") sent first to fill a proxy's transform/response
+# buffer and force an early flush, so the real token chunks that follow aren't held back to one
+# burst (Cloudflare's edge buffering). A short keep-alive comment is sent between agent turns to
+# flush the gap while a tool runs. Comments are ignored by EventSource and by our client parser
+# (frontend/lib/api.ts only reads lines starting with "data:"), so they are invisible to the UI.
+_SSE_PRIMER = ": " + " " * 2048 + "\n\n"
+_SSE_KEEPALIVE = ": keep-alive\n\n"
+
+
 def stream_chat(message: str, history) -> Iterator[str]:
     try:
         client = _get_client()
@@ -199,7 +208,9 @@ def stream_chat(message: str, history) -> Iterator[str]:
     model = _route_model(message, history)
 
     try:
+        yield _SSE_PRIMER  # prime proxy buffers so the first real token isn't held back
         for _ in range(_MAX_TOOL_ITERS):
+            yield _SSE_KEEPALIVE  # flush the gap before each model turn (e.g. while a tool runs)
             pending: list[str] = []
             with _open_stream(
                 client,

@@ -24,7 +24,9 @@ def chat_stream(req: ChatRequest) -> StreamingResponse:
     return StreamingResponse(
         llm.stream_chat(req.message, req.history),
         media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        # no-transform tells Cloudflare (and other proxies) NOT to compress/transform the
+        # stream — its transform-buffering is what holds the whole SSE body back to one burst.
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
     )
 
 
