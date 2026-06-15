@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { Citation, ChatMessage, streamChat } from "@/lib/api";
+import { Markdown } from "@/components/Markdown";
 
 type Msg = { role: "user" | "assistant"; content: string; tools: string[]; streaming?: boolean };
 
@@ -92,7 +94,9 @@ export function Chat() {
                   <div key={`t${i}-${j}`} className="tool-chip">⚙ {t}</div>
                 ))}
                 {(m.content || m.role === "user") && (
-                  <div className={`bubble ${m.role}${m.streaming ? " streaming" : ""}`}>{m.content}</div>
+                  <div className={`bubble ${m.role}${m.streaming ? " streaming" : ""}`}>
+                    {m.role === "assistant" ? <Markdown>{m.content}</Markdown> : m.content}
+                  </div>
                 )}
               </div>
             ))}
@@ -110,6 +114,13 @@ export function Chat() {
               {busy ? "…" : "Ask"}
             </button>
           </div>
+
+          <p className="composer-note">
+            Answers are AI-generated and may be inaccurate — general information about MiCA,
+            not legal advice. Your question is sent to Anthropic (Claude) to generate a response;
+            don&apos;t enter personal or confidential data. See{" "}
+            <Link href="/privacy">Privacy</Link> &amp; <Link href="/terms">Terms</Link>.
+          </p>
 
           {messages.length === 0 && (
             <div className="examples">

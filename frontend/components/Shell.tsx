@@ -26,6 +26,23 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </nav>
       </header>
       <main className="main">{children}</main>
+      <footer className="site-footer">
+        <span className="site-footer-note">
+          A final project for the AUEB <em>“AI for Developers”</em> course · educational tool,
+          answers are AI-generated and <strong>not legal advice</strong>.
+        </span>
+        <nav className="site-footer-links">
+          <Link href="/docs">Docs</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+        </nav>
+      </footer>
+      {!path.startsWith("/docs") && (
+        <Link href="/docs" className="docs-fab" aria-label="Open documentation">
+          <span className="docs-fab-icon" aria-hidden>📘</span>
+          Docs
+        </Link>
+      )}
     </div>
   );
 }

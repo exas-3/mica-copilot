@@ -1,5 +1,8 @@
 # MiCA Compliance Copilot
 
+> 🎓 **Final project for the Athens University of Economics and Business (AUEB)
+> *“AI for Developers — Building with LLMs”* course.**
+
 A small but complete **GenAI application**: a Retrieval-Augmented + agentic assistant for
 the EU **Markets in Crypto-Assets Regulation** (Regulation (EU) 2023/1114, "MiCA").
 
@@ -8,7 +11,7 @@ article-level citations**, **classifies a token or service under MiCA** as a str
 result, and can **look up the ESMA register snapshot** through tool-calling — refusing to
 answer when the indexed corpus doesn't support a grounded answer.
 
-> Built for the AUEB *AI for Developers — Building with LLMs* final project. Architecture:
+> Architecture:
 > **FastAPI backend + Next.js UI + Claude (RAG · agents · tool-calling · structured outputs · prompt caching)**.
 
 ![architecture](docs/architecture.svg)

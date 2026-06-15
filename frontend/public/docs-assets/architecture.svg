@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="360" viewBox="0 0 920 360" font-family="Geist, Arial, sans-serif">
+  <rect width="920" height="360" fill="#faf9f5"/>
+  <style>
+    .box{rx:10;ry:10;stroke:#d9d5c8;stroke-width:1.5;}
+    .t{font-size:14px;fill:#14140f;font-weight:600;}
+    .s{font-size:11px;fill:#6b6b60;}
+    .arr{stroke:#1a3e72;stroke-width:1.6;fill:none;marker-end:url(#a);}
+    .lbl{font-size:10px;fill:#6b6b60;}
+  </style>
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#1a3e72"/>
+    </marker>
+  </defs>
+
+  <!-- UI -->
+  <rect class="box" x="24" y="120" width="170" height="110" fill="#eef6ee"/>
+  <text class="t" x="40" y="150">Next.js UI</text>
+  <text class="s" x="40" y="172">Ask MiCA (stream)</text>
+  <text class="s" x="40" y="190">Classify (structured)</text>
+  <text class="s" x="40" y="208">Citations panel</text>
+
+  <!-- FastAPI -->
+  <rect class="box" x="248" y="110" width="190" height="130" fill="#eef2fb"/>
+  <text class="t" x="266" y="138">FastAPI backend</text>
+  <text class="s" x="266" y="160">routers · services</text>
+  <text class="s" x="266" y="178">schemas (validation)</text>
+  <text class="s" x="266" y="196">Swagger /docs</text>
+  <text class="s" x="266" y="214">SSE streaming</text>
+
+  <!-- GenAI -->
+  <rect class="box" x="492" y="60" width="200" height="110" fill="#f3eefb"/>
+  <text class="t" x="510" y="88">Claude — Sonnet 4.6</text>
+  <text class="s" x="510" y="110">agent loop · tool calling</text>
+  <text class="s" x="510" y="128">structured outputs</text>
+  <text class="s" x="510" y="146">adaptive thinking · cache</text>
+
+  <!-- Tools -->
+  <rect class="box" x="492" y="190" width="200" height="120" fill="#fbf1e9"/>
+  <text class="t" x="510" y="216">Agent tools</text>
+  <text class="s" x="510" y="238">search_regulation (RAG)</text>
+  <text class="s" x="510" y="256">lookup_register</text>
+  <text class="s" x="510" y="274">check_enforcement</text>
+
+  <!-- KB -->
+  <rect class="box" x="744" y="120" width="150" height="120" fill="#fdf7e6"/>
+  <text class="t" x="760" y="148">Postgres</text>
+  <text class="s" x="760" y="170">+ pgvector</text>
+  <text class="s" x="760" y="192">reg_chunks</text>
+  <text class="s" x="760" y="210">register snapshot</text>
+
+  <!-- arrows -->
+  <path class="arr" d="M194,170 L246,170"/>
+  <text class="lbl" x="198" y="162">HTTP/SSE</text>
+  <path class="arr" d="M438,140 L490,115"/>
+  <path class="arr" d="M490,150 L438,175" stroke="#9a9a8c" marker-end="url(#a)"/>
+  <path class="arr" d="M592,170 L592,188"/>
+  <text class="lbl" x="598" y="184">tool calls</text>
+  <path class="arr" d="M692,250 L742,200"/>
+  <text class="lbl" x="700" y="250">embed · search</text>
+</svg>
