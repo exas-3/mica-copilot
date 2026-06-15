@@ -1,22 +1,26 @@
 """Evaluation harness for the MiCA copilot.
 
-Measures, against a small golden set (eval/goldens.jsonl):
+Measures, against a golden set (eval/goldens.jsonl):
   - retrieval hit@k  — does the expected article appear in the retrieved provisions?
   - citation hit     — (e2e) does the agent's answer actually cite the expected article?
   - abstention       — (e2e) does the agent decline on out-of-corpus questions?
   - faithfulness     — (judge) is the answer supported by the retrieved context? (LLM-as-judge)
+  - register hit     — (kind="register") does the ESMA-register lookup find the expected entity?
 
 Run:
   python -m eval.run                 # retrieval-only (offline; needs DB + embedder, no Claude key)
+  python -m eval.run --ablate        # retrieval-only lever ablation (prefix / hybrid / rerank), no key
   python -m eval.run --e2e           # also run the full agent loop and score citations/abstention
   python -m eval.run --e2e --judge   # also score faithfulness with an LLM judge (Haiku)
+  python -m eval.run --e2e --judge --tag after --baseline eval/results/scorecard_before.json
 
-Writes eval/results/scorecard.json.
+Writes eval/results/scorecard.json (and scorecard_<tag>.json when --tag is given).
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from app.config import get_settings
@@ -35,11 +39,34 @@ def _refs(chunks: list[dict]) -> set[str]:
     return {(c.get("article_ref") or "").split("(")[0].strip() for c in chunks}
 
 
+def _match(g: dict, raw_refs: list[str]) -> bool:
+    """A hit if an expected article appears among the refs, OR the topic's accepted Level-2
+    elaboration does (the golden's optional ``also_accept`` substrings) — since the specific
+    RTS/guideline that elaborates the article is itself a correct answer."""
+    stripped = {r.split("(")[0].strip() for r in raw_refs}
+    if any(exp in stripped for exp in g["expected_articles"]):
+        return True
+    return any(a.lower() in r.lower() for a in (g.get("also_accept") or []) for r in raw_refs)
+
+
 def retrieval_hit(g: dict) -> bool:
     if g["kind"] != "answerable":
         return True  # not applicable
-    got = _refs(rag.retrieve_for_answer(g["question"]))
-    return any(exp in got for exp in g["expected_articles"])
+    raw = [(c.get("article_ref") or "") for c in rag.retrieve_for_answer(g["question"])]
+    return _match(g, raw)
+
+
+def judge_context(question: str, k: int = 15) -> str:
+    """Build a *generous* context for the faithfulness judge — more chunks than the answer
+    pipeline hands the model. Faithfulness asks 'is the answer grounded in the corpus?',
+    so the judge should see the relevant provision in full; with small chunks a single
+    article is split across several, and a top-6 judge context would unfairly miss pieces.
+    """
+    from app.rag.embed import get_embedder
+    from app.rag.store import search_hybrid
+
+    vec = get_embedder().embed_query(question)
+    return rag.build_context(search_hybrid(question, vec, k))
 
 
 def judge_faithfulness(question: str, answer: str, context: str) -> bool:
@@ -60,27 +87,98 @@ def judge_faithfulness(question: str, answer: str, context: str) -> bool:
     return "UNSUPPORTED" not in text
 
 
+# ── Ablation (retrieval-only; no Claude key) ─────────────────────────────────
+def _clear_caches() -> None:
+    """Rebuild the cached singletons that depend on settings (so env overrides take effect)."""
+    get_settings.cache_clear()
+    from app.rag.embed import get_embedder
+
+    get_embedder.cache_clear()
+    try:
+        from app.rag.rerank import get_reranker
+
+        get_reranker.cache_clear()
+    except Exception:
+        pass
+
+
+def _apply(env: dict) -> None:
+    for k, v in env.items():
+        if v is None:
+            os.environ.pop(k, None)
+        else:
+            os.environ[k] = str(v)
+    _clear_caches()
+
+
+_ABLATION = [
+    ("vector, no query-prefix (baseline)", {"LOCAL_QUERY_PREFIX": "none", "RETRIEVAL_MODE": "vector", "RERANK": "off", "RETRIEVAL_DIVERSITY": "false"}),
+    ("+ mxbai query prefix",               {"LOCAL_QUERY_PREFIX": None,   "RETRIEVAL_MODE": "vector", "RERANK": "off", "RETRIEVAL_DIVERSITY": "false"}),
+    ("+ hybrid (vector+lexical RRF)",      {"LOCAL_QUERY_PREFIX": None,   "RETRIEVAL_MODE": "hybrid", "RERANK": "off", "RETRIEVAL_DIVERSITY": "false"}),
+    ("+ diversity (reserve base + cap)",   {"LOCAL_QUERY_PREFIX": None,   "RETRIEVAL_MODE": "hybrid", "RERANK": "off", "RETRIEVAL_DIVERSITY": "true"}),
+]
+
+
+def ablate(goldens: list[dict]) -> None:
+    answerable = [g for g in goldens if g["kind"] == "answerable"]
+    n = max(len(answerable), 1)
+    print(f"\n=== Retrieval ablation — retrieval_hit@k on {len(answerable)} answerable goldens ===")
+    grids: list[tuple[str, float, list[bool]]] = []
+    for label, env in _ABLATION:
+        _apply(env)
+        hits = [_match(g, [(c.get("article_ref") or "") for c in rag.retrieve_for_answer(g["question"])]) for g in answerable]
+        grids.append((label, sum(hits) / n, hits))
+        print(f"  {label:38s} {sum(hits) / n:.3f}  ({sum(hits)}/{len(answerable)})")
+
+    print("\n  per-question flip grid (columns S0..S{} = ablation stages above):".format(len(_ABLATION) - 1))
+    print(f"    {'expected article(s)':<26} " + "  ".join(f"S{i}" for i in range(len(_ABLATION))))
+    for j, g in enumerate(answerable):
+        marks = "  ".join(" ✓" if grids[s][2][j] else " ✗" for s in range(len(_ABLATION)))
+        print(f"    {','.join(g['expected_articles'])[:25]:<26} {marks}")
+    _apply({"LOCAL_QUERY_PREFIX": None, "RETRIEVAL_MODE": None, "RERANK": None})  # reset to .env defaults
+
+
+def _diff(baseline_path: str, scorecard: dict) -> None:
+    try:
+        base = json.loads(Path(baseline_path).read_text())["scorecard"]
+    except Exception as e:  # noqa: BLE001
+        print(f"  (could not read baseline {baseline_path}: {e})")
+        return
+    print("\n  Δ vs baseline:")
+    for k, v in scorecard.items():
+        if isinstance(v, (int, float)) and isinstance(base.get(k), (int, float)):
+            d = v - base[k]
+            print(f"    {k:24s}: {base[k]:.3f} → {v:.3f}  ({d:+.3f})")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--e2e", action="store_true", help="Run the full agent loop and score citations/abstention.")
     ap.add_argument("--judge", action="store_true", help="Score faithfulness with an LLM judge (implies --e2e).")
+    ap.add_argument("--ablate", action="store_true", help="Retrieval-only lever ablation (no Claude key). Standalone.")
+    ap.add_argument("--tag", default=None, help="Also write eval/results/scorecard_<tag>.json.")
+    ap.add_argument("--baseline", default=None, help="Print metric deltas vs a prior scorecard JSON.")
     args = ap.parse_args()
     if args.judge:
         args.e2e = True
 
     goldens = load_goldens()
+
+    if args.ablate:
+        ablate(goldens)
+        return
+
     answerable = [g for g in goldens if g["kind"] == "answerable"]
     abstainers = [g for g in goldens if g["kind"] == "abstain"]
+    registers = [g for g in goldens if g["kind"] == "register"]
 
     rows = []
-    retr_hits = 0
-    cite_hits = 0
-    abstain_ok = 0
-    faithful_ok = 0
-    judged = 0
+    retr_hits = cite_hits = abstain_ok = faithful_ok = judged = reg_hits = 0
 
     if args.e2e:
         from app.services import llm
+    if registers:
+        from app.services import registry
 
     for g in goldens:
         row = {"question": g["question"], "kind": g["kind"]}
@@ -90,15 +188,24 @@ def main() -> None:
             retr_hits += int(r_hit)
             row["retrieval_hit"] = r_hit
 
+        if g["kind"] == "register":
+            # Deterministic ESMA-register lookup (no Claude): does the query find the entity?
+            got = registry.search_registry(g.get("query", g["question"]))
+            names = " ".join((r.get("name") or "") + " " + (r.get("detail") or "") for r in got).lower()
+            ok = bool(got) and all(e.lower() in names for e in g.get("expect_contains", []))
+            reg_hits += int(ok)
+            row["register_hit"] = ok
+            continue
+
         if args.e2e:
             result = llm.chat_sync(g["question"], [])
-            cited = {(c.get("article_ref") or "").split("(")[0].strip() for c in result.get("citations", [])}
+            cited_raw = [(c.get("article_ref") or "") for c in result.get("citations", [])]
             if g["kind"] == "answerable":
-                c_hit = any(exp in cited for exp in g["expected_articles"])
+                c_hit = _match(g, cited_raw)
                 cite_hits += int(c_hit)
                 row["citation_hit"] = c_hit
                 if args.judge and result.get("citations"):
-                    ctx = rag.build_context(rag.retrieve_for_answer(g["question"]))
+                    ctx = judge_context(g["question"])
                     f = judge_faithfulness(g["question"], result["answer"], ctx)
                     faithful_ok += int(f)
                     judged += 1
@@ -120,15 +227,23 @@ def main() -> None:
         scorecard["abstention_accuracy"] = round(abstain_ok / max(len(abstainers), 1), 3)
         if judged:
             scorecard["faithfulness"] = round(faithful_ok / judged, 3)
+    if registers:
+        scorecard["register_hit"] = round(reg_hits / max(len(registers), 1), 3)
 
     RESULTS.mkdir(exist_ok=True)
-    (RESULTS / "scorecard.json").write_text(json.dumps({"scorecard": scorecard, "rows": rows}, indent=2))
+    payload = json.dumps({"scorecard": scorecard, "rows": rows}, indent=2)
+    (RESULTS / "scorecard.json").write_text(payload)
+    if args.tag:
+        (RESULTS / f"scorecard_{args.tag}.json").write_text(payload)
 
     print("\n=== MiCA Copilot — Evaluation Scorecard ===")
     for k, v in scorecard.items():
         print(f"  {k:24s}: {v}")
-    print(f"\n  (details written to eval/results/scorecard.json)")
-    print("  embedder:", get_settings().embedder)
+    s = get_settings()
+    print(f"\n  config: embedder={s.embedder} retrieval_mode={s.retrieval_mode} rerank={s.rerank}")
+    if args.baseline:
+        _diff(args.baseline, scorecard)
+    print("  (details written to eval/results/scorecard.json)")
 
 
 if __name__ == "__main__":

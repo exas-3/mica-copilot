@@ -11,3 +11,19 @@
 {"question": "Is insider dealing in crypto-assets prohibited?", "expected_articles": ["Article 89"], "kind": "answerable"}
 {"question": "What capital gains tax rate applies when I sell Bitcoin in Germany?", "expected_articles": [], "kind": "abstain"}
 {"question": "What does the EU AI Act say about facial recognition?", "expected_articles": [], "kind": "abstain"}
+{"question": "What rules apply to marketing communications for a crypto-asset offer to the public?", "expected_articles": ["Article 7"], "kind": "answerable"}
+{"question": "Does a retail consumer have a right of withdrawal after buying a crypto-asset from an offeror?", "expected_articles": ["Article 13"], "kind": "answerable"}
+{"question": "What own funds must an issuer of an asset-referenced token maintain?", "expected_articles": ["Article 35"], "kind": "answerable"}
+{"question": "How must the reserve assets of an asset-referenced token be kept in custody?", "expected_articles": ["Article 37"], "kind": "answerable"}
+{"question": "Must an issuer of an asset-referenced token draw up a recovery plan?", "expected_articles": ["Article 46"], "kind": "answerable"}
+{"question": "When does the reverse solicitation exemption apply under MiCA?", "expected_articles": ["Article 61"], "also_accept": ["reverse solicitat"], "kind": "answerable"}
+{"question": "What is a crypto-asset service provider's duty to act honestly, fairly and professionally?", "expected_articles": ["Article 66"], "kind": "answerable"}
+{"question": "Must a crypto-asset service provider establish a complaints-handling procedure?", "expected_articles": ["Article 71"], "also_accept": ["DR 2025/294", "DR 2025/293"], "kind": "answerable"}
+{"question": "What obligations apply when a CASP provides custody and administration of crypto-assets on behalf of clients?", "expected_articles": ["Article 75"], "kind": "answerable"}
+{"question": "Is market manipulation of crypto-assets prohibited under MiCA?", "expected_articles": ["Article 91"], "also_accept": ["DR 2025/885", "supervisory pr"], "kind": "answerable"}
+{"question": "Must a person possessing inside information about a crypto-asset disclose it to the public?", "expected_articles": ["Article 88"], "kind": "answerable"}
+{"question": "Who supervises significant asset-referenced tokens — the EBA or the national authority?", "expected_articles": ["Article 117"], "kind": "answerable"}
+{"question": "What is the capital gains tax treatment of staking rewards in France?", "expected_articles": [], "kind": "abstain"}
+{"question": "How does the GDPR define a data controller?", "expected_articles": [], "kind": "abstain"}
+{"question": "Does Cardano have a MiCA crypto-asset white paper, and what is its token?", "kind": "register", "query": "Cardano", "expect_contains": ["ADA"]}
+{"question": "Is Kraken registered as an authorised crypto-asset service provider in the EU?", "kind": "register", "query": "Kraken", "expect_contains": []}
