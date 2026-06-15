@@ -200,7 +200,7 @@ def main() -> None:
             continue
 
         if args.e2e:
-            result = llm.chat_sync(g["question"], [])
+            result = llm.chat_sync(g["question"], [], log=False)  # don't pollute chat_logs with eval
             u = result.get("usage") or {}
             if u:
                 for k, v in u.items():

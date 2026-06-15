@@ -17,6 +17,12 @@ from app.routers import chat, classify, health, registry
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Ensure the write-only conversation log table exists (it is never read by the agent).
+    try:
+        from app.services import chatlog
+        chatlog.ensure_table()
+    except Exception:  # noqa: BLE001 — never block startup on logging setup
+        pass
     yield
     close_pool()
 

@@ -27,7 +27,7 @@ from app.agents.prompts import (
 )
 from app.agents.tools import TOOLS, run_tool
 from app.config import get_settings
-from app.services import rag
+from app.services import chatlog, rag
 
 _MAX_TOOL_ITERS = 5
 
@@ -112,7 +112,7 @@ def _to_message_dicts(history) -> list[dict]:
 
 
 # ── Synchronous chat (full agent loop, JSON response) ────────────────────────
-def chat_sync(message: str, history) -> dict:
+def chat_sync(message: str, history, *, log: bool = True) -> dict:
     client = _get_client()
     s = get_settings()
     messages = _to_message_dicts(history) + [{"role": "user", "content": message}]
@@ -151,7 +151,7 @@ def chat_sync(message: str, history) -> dict:
 
         # Final answer
         answer = "".join(b.text for b in resp.content if b.type == "text").strip()
-        return {
+        result = {
             "answer": answer or "(no answer produced)",
             "citations": citations,
             "tool_events": tool_events,
@@ -159,8 +159,12 @@ def chat_sync(message: str, history) -> dict:
             "model": model,
             "usage": usage,
         }
+        if log:
+            chatlog.log_turn(message, result["answer"], grounded=result["grounded"], model=model,
+                             citations=citations, tool_events=tool_events, usage=usage)
+        return result
 
-    return {
+    result = {
         "answer": "I couldn't complete the lookup within the allotted steps. Please rephrase the question.",
         "citations": citations,
         "tool_events": tool_events,
@@ -168,6 +172,10 @@ def chat_sync(message: str, history) -> dict:
         "model": model,
         "usage": usage,
     }
+    if log:
+        chatlog.log_turn(message, result["answer"], grounded=result["grounded"], model=model,
+                         citations=citations, tool_events=tool_events, usage=usage)
+    return result
 
 
 # ── Streaming chat (SSE) ─────────────────────────────────────────────────────
@@ -185,6 +193,7 @@ def stream_chat(message: str, history) -> Iterator[str]:
     s = get_settings()
     messages = _to_message_dicts(history) + [{"role": "user", "content": message}]
     citations: list[dict] = []
+    tool_events: list[dict] = []
     seen_refs: set[str] = set()
     usage: dict = {}
     model = _route_model(message, history)
@@ -222,6 +231,7 @@ def stream_chat(message: str, history) -> Iterator[str]:
                         out = run_tool(block.name, block.input or {})
                         yield _sse({"type": "tool", "tool": block.name,
                                     "input": block.input or {}, "summary": out["summary"]})
+                        tool_events.append({"tool": block.name, "input": block.input or {}, "summary": out["summary"]})
                         for c in out.get("citations", []):
                             key = c.get("source_url") or c.get("article_ref", "")
                             if key and key not in seen_refs:
@@ -234,13 +244,18 @@ def stream_chat(message: str, history) -> Iterator[str]:
                 continue
 
             # Final answer already streamed as tokens above.
+            answer_text = "".join(b.text for b in final.content if getattr(b, "type", None) == "text").strip()
             yield _sse({"type": "citations", "citations": citations, "grounded": bool(citations)})
             yield _sse({"type": "usage", "model": model, "usage": usage})
+            chatlog.log_turn(message, answer_text, grounded=bool(citations), model=model,
+                             citations=citations, tool_events=tool_events, usage=usage)
             yield _sse({"type": "done"})
             return
 
         yield _sse({"type": "citations", "citations": citations, "grounded": bool(citations)})
         yield _sse({"type": "usage", "model": model, "usage": usage})
+        chatlog.log_turn(message, "", grounded=bool(citations), model=model,
+                         citations=citations, tool_events=tool_events, usage=usage)
         yield _sse({"type": "done"})
     except anthropic.APIError as e:
         yield _sse({"type": "error", "message": f"Claude API error: {e}"})
