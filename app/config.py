@@ -26,10 +26,22 @@ class Settings(BaseSettings):
     voyage_model: str = "voyage-law-2"
     local_embed_model: str = "mixedbread-ai/mxbai-embed-large-v1"
     embed_dim: int = 1024
+    local_query_prefix: str = ""  # query-side instruction; empty → derived (mxbai is asymmetric, needs one)
 
     # Retrieval
     top_k: int = 20      # candidates pulled from pgvector
-    return_k: int = 6    # chunks kept after (optional) rerank and handed to the model
+    return_k: int = 6    # chunks kept after rerank and handed to the model
+    retrieval_mode: str = "vector"   # "vector" | "hybrid" (cosine + lexical tsv, RRF); vector wins on the eval
+    rerank: str = "off"              # "off" | "local" | "voyage" (cross-encoder over a larger pool)
+    rerank_model: str = "Xenova/ms-marco-MiniLM-L-6-v2"  # key-free local cross-encoder
+    rerank_pool: int = 40            # candidates fetched before reranking down to return_k
+    # Source-diversity selection: stop one document (e.g. an RTS or ESMA guideline) from
+    # crowding out the base article it elaborates. Reserve slots for the top base-regulation
+    # provisions, then fill capping any one source document.
+    retrieval_diversity: bool = False  # off: net-negative on the eval (broke Art 59 / 4-5); kept as an option
+    diversity_pool: int = 150        # candidates fetched before diverse selection
+    reserve_base: int = 2            # slots reserved for top base-regulation provisions
+    max_per_doc: int = 2             # max chunks from a single source document in the result
 
     # Document corpus (official regulation + ESMA/EBA RTS/ITS/guidelines/Q&As)
     document_sources_path: str = "data/document_sources.json"
@@ -58,6 +70,19 @@ class Settings(BaseSettings):
     @property
     def has_claude(self) -> bool:
         return bool(self.anthropic_api_key)
+
+    @property
+    def effective_local_query_prefix(self) -> str:
+        """Query instruction for the local embedder. mxbai-embed-large-v1 is asymmetric and
+        expects queries (not documents) to carry this prompt; fastembed does NOT add it.
+        Set LOCAL_QUERY_PREFIX="none" to disable (used by the eval ablation)."""
+        if self.local_query_prefix == "none":
+            return ""
+        if self.local_query_prefix:
+            return self.local_query_prefix
+        if "mxbai" in self.local_embed_model.lower():
+            return "Represent this sentence for searching relevant passages: "
+        return ""
 
 
 @lru_cache

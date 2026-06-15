@@ -98,6 +98,7 @@ def main() -> None:
     if not records:
         raise SystemExit("No document records to ingest. Check network or data/document_sources.json.")
 
+    records = eurlex.expand_art3_definitions(records)  # Art 3 → one record per defined term
     chunks = [c for r in records for c in chunk_record(r)]
     print(f"→ {len(records)} documents/articles → {len(chunks)} chunks; embedding…")
     embeddings = get_embedder().embed_documents([c.chunk_text for c in chunks])

@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from app.config import get_settings
 from app.rag.embed import get_embedder
-from app.rag.store import search
+from app.rag.store import search, search_hybrid, select_diverse
 
 
 def retrieve(query: str, k: int | None = None) -> list[dict]:
@@ -19,11 +19,31 @@ def retrieve(query: str, k: int | None = None) -> list[dict]:
 
 
 def retrieve_for_answer(query: str) -> list[dict]:
-    """Pull TOP_K candidates, keep the best RETURN_K for the model."""
+    """Retrieve the best RETURN_K chunks for the model.
+
+    Pipeline: embed the query (with the model's query prompt) → candidate search
+    (hybrid vector+lexical RRF, or pure vector) over a pool → optional cross-encoder
+    rerank → keep RETURN_K. Reranking is off by default (keeps the default offline + fast).
+    """
     s = get_settings()
-    embedder = get_embedder()
-    vec = embedder.embed_query(query)
-    rows = search(vec, s.top_k)
+    vec = get_embedder().embed_query(query)
+
+    # Reranker path (opt-in, off by default): rerank a larger candidate pool down to return_k.
+    if s.rerank != "off":
+        pool_n = max(s.top_k, s.rerank_pool)
+        rows = search_hybrid(query, vec, pool_n) if s.retrieval_mode == "hybrid" else search(vec, pool_n)
+        from app.rag.rerank import rerank as _rerank
+
+        return _rerank(query, rows, s.return_k)
+
+    # Diversity path (default): fetch a large pool, then reserve base-regulation slots and cap
+    # per source document so an article isn't crowded out by its own RTS/guidelines.
+    if s.retrieval_mode == "hybrid" and s.retrieval_diversity:
+        pool = search_hybrid(query, vec, s.diversity_pool, pool=s.diversity_pool)
+        return select_diverse(pool, s.return_k, s.reserve_base, s.max_per_doc)
+
+    # Plain top-k.
+    rows = search_hybrid(query, vec, s.top_k) if s.retrieval_mode == "hybrid" else search(vec, s.top_k)
     return rows[: s.return_k]
 
 

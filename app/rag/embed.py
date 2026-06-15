@@ -48,17 +48,21 @@ class VoyageEmbedder:
 
 
 class LocalEmbedder:
-    def __init__(self, model: str, dim: int) -> None:
+    def __init__(self, model: str, dim: int, query_prefix: str = "") -> None:
         from fastembed import TextEmbedding
 
         self._model = TextEmbedding(model_name=model)
         self.dim = dim
+        # mxbai-embed-large-v1 is asymmetric: queries need a prompt, documents do not.
+        # fastembed's query_embed() is a no-op for this model, so we prepend manually.
+        self._query_prefix = query_prefix
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
         return [vec.tolist() for vec in self._model.embed(texts)]
 
     def embed_query(self, text: str) -> list[float]:
-        return next(iter(self._model.embed([text]))).tolist()
+        q = f"{self._query_prefix}{text}" if self._query_prefix else text
+        return next(iter(self._model.embed([q]))).tolist()
 
 
 @lru_cache
@@ -68,4 +72,4 @@ def get_embedder() -> Embedder:
         if not s.voyage_api_key:
             raise RuntimeError("EMBEDDER=voyage but VOYAGE_API_KEY is empty. Set the key or use EMBEDDER=local.")
         return VoyageEmbedder(s.voyage_api_key, s.voyage_model, s.embed_dim)
-    return LocalEmbedder(s.local_embed_model, s.embed_dim)
+    return LocalEmbedder(s.local_embed_model, s.embed_dim, s.effective_local_query_prefix)

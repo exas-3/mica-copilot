@@ -65,11 +65,58 @@ def parse_articles(html: str, celex: str, title: str, doc_type: str) -> list[dic
             "source": "document",
             "article_ref": ref,
             "title": (art_title[:200] if celex == REG_CELEX else f"{art_title[:120]} — {title[:90]}"),
-            "chunk_text": art_body[:6000],
+            # generous per-article cap: long articles (e.g. Art 3 definitions) are split into
+            # sub-budget chunks downstream, so we keep the full text instead of truncating it.
+            "chunk_text": art_body[:16000],
             "source_url": f"{anchor_base}#art_{num}",
             "metadata": {"celex": celex, "doc_type": doc_type, "label": label},
         })
     return records
+
+
+_DEF_QUOTE = "'‘’\"“”"
+_DEF_START = re.compile(rf"\(\d{{1,3}}\)\s*[{_DEF_QUOTE}]")
+_DEF_SPLIT = re.compile(rf"(?=\(\d{{1,3}}\)\s*[{_DEF_QUOTE}])")
+_DEF_HEAD = re.compile(rf"\((\d{{1,3}})\)\s*[{_DEF_QUOTE}]([^{_DEF_QUOTE}]+)[{_DEF_QUOTE}]")
+
+
+def _split_definitions(body: str, celex: str, doc_type: str) -> list[dict]:
+    """Turn the Article 3 'Definitions' list into one record per defined term, so a single
+    term (e.g. 'asset-referenced token') is retrievable on its own instead of diluted in one
+    big blob. Returns [] if fewer than 10 terms parse (caller then keeps the whole article)."""
+    text = re.sub(r"[ \t]+", " ", (body or "").replace("\n", " ")).strip()
+    pieces = [p.strip() for p in _DEF_SPLIT.split(text) if _DEF_START.match(p.strip())]
+    if len(pieces) < 10:
+        return []
+    recs: list[dict] = []
+    for p in pieces:
+        m = _DEF_HEAD.match(p)
+        if not m:
+            continue
+        num, term = m.group(1), m.group(2).strip()
+        recs.append({
+            "source": "document",
+            "article_ref": f"Article 3({num})",
+            "title": f"Definition: {term}"[:200],
+            "chunk_text": p[:1800].rstrip("; "),
+            "source_url": f"{ELI}#art_3",
+            "metadata": {"celex": celex, "doc_type": doc_type, "label": "MiCA", "def_term": term},
+        })
+    return recs
+
+
+def expand_art3_definitions(records: list[dict]) -> list[dict]:
+    """Replace the single Article 3 record with per-definition records (called at ingest)."""
+    out: list[dict] = []
+    for r in records:
+        meta = r.get("metadata") or {}
+        if r.get("article_ref") == "Article 3" and meta.get("celex") == REG_CELEX:
+            defs = _split_definitions(r.get("chunk_text") or "", REG_CELEX, meta.get("doc_type", "regulation"))
+            if defs:
+                out.extend(defs)
+                continue
+        out.append(r)
+    return out
 
 
 def fetch_celex_records(celex: str, title: str, doc_type: str) -> list[dict]:
