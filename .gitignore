@@ -5,9 +5,21 @@ __pycache__/
 venv/
 *.egg-info/
 
-# Env / secrets — NEVER commit API keys
+# Env / secrets — NEVER commit API keys (keep *.example templates tracked)
 .env
-.env.local
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+.npmrc
+.netrc
+id_rsa
+id_ed25519
+
+# Internal agent/infra notes — local-only, never publish (carries host/deploy details)
+CLAUDE.md
 
 # Node / Next.js
 node_modules/
