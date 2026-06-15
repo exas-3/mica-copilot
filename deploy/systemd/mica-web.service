@@ -1,0 +1,20 @@
+[Unit]
+Description=MiCA Copilot — Next.js frontend (:3000)
+After=network-online.target mica-api.service
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=/home/work/mica-copilot/frontend
+# mise-managed node/npm: shims must be on PATH so npm can resolve node.
+Environment=PATH=/home/work/.local/share/mise/shims:/home/work/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/home/work/.local/share/mise/shims/npm run dev
+# Production alternative (recommended for a public demo — faster, no dev overlay):
+#   build once with `npm run build`, then swap the line above for:
+#   ExecStart=/home/work/.local/share/mise/shims/npm run start
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

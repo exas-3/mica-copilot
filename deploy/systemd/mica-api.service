@@ -1,0 +1,16 @@
+[Unit]
+Description=MiCA Copilot — FastAPI backend (127.0.0.1:8000, localhost-only)
+After=network-online.target
+Wants=network-online.target
+# Never stop trying to restart (no rate-limit lockout on repeated failures).
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=/home/work/mica-copilot
+ExecStart=/home/work/mica-copilot/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

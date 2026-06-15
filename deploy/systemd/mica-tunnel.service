@@ -1,0 +1,16 @@
+[Unit]
+Description=Cloudflare Tunnel — mica.exadaktylos.xyz → local app
+After=network-online.target mica-web.service
+Wants=network-online.target mica-web.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+# TUNNEL_TOKEN lives in this 0600 file, not in the unit (which is world-readable).
+EnvironmentFile=/home/work/.cloudflared/tunnel.env
+ExecStart=/home/work/.local/bin/cloudflared --no-autoupdate tunnel run
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
