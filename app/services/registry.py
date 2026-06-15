@@ -84,3 +84,14 @@ def register_row_count() -> int:
         if rows:
             total += int(rows[0][0])
     return total
+
+
+def register_counts() -> dict:
+    """Per-category counts from the live ESMA register snapshot. A zero is a *market
+    fact* (e.g. no asset-referenced-token issuer has been authorised under Title III
+    yet), not missing data — callers should frame an empty category that way."""
+    out: dict[str, int] = {}
+    for table in ("casps", "emt_issuers", "art_issuers", "other_whitepapers", "non_compliant"):
+        rows = _safe(f"SELECT count(*) FROM {table}", ())
+        out[table] = int(rows[0][0]) if rows else 0
+    return out

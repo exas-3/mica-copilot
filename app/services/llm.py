@@ -50,22 +50,25 @@ def _system_blocks() -> list[dict]:
     return [{"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}}]
 
 
-def _advanced_kwargs() -> dict:
-    return {"thinking": {"type": "adaptive"}, "output_config": {"effort": _EFFORT}}
+def _advanced_kwargs(thinking: bool = True) -> dict:
+    kw: dict = {"output_config": {"effort": _EFFORT}}
+    if thinking:
+        kw["thinking"] = {"type": "adaptive"}
+    return kw
 
 
-def _create(client: anthropic.Anthropic, **kwargs):
+def _create(client: anthropic.Anthropic, *, thinking: bool = True, **kwargs):
     """messages.create, tolerant of SDK versions that don't know the newest params."""
     try:
-        return client.messages.create(**kwargs, **_advanced_kwargs())
+        return client.messages.create(**kwargs, **_advanced_kwargs(thinking))
     except TypeError:
         return client.messages.create(**kwargs)
 
 
-def _open_stream(client: anthropic.Anthropic, **kwargs):
+def _open_stream(client: anthropic.Anthropic, *, thinking: bool = True, **kwargs):
     """messages.stream context manager, with the same advanced-param tolerance."""
     try:
-        return client.messages.stream(**kwargs, **_advanced_kwargs())
+        return client.messages.stream(**kwargs, **_advanced_kwargs(thinking))
     except TypeError:
         return client.messages.stream(**kwargs)
 

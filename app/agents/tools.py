@@ -55,7 +55,10 @@ TOOLS = [
             "(matched by the token name/ticker read from the white-paper document, the offeror, or "
             "the white-paper URL), and flagged entities. Call this whenever the user asks whether a "
             "named firm, token, or coin (e.g. 'Cardano', 'ADA', 'MegaETH') is authorised/registered "
-            "or has a published MiCA white paper. Returns the white-paper URL when found."
+            "or has a published MiCA white paper. Returns the white-paper URL when found. "
+            "Absence is informative: if a whole category is empty (e.g. no asset-referenced-token "
+            "issuer has been authorised under Title III yet), report it as current market status, "
+            "not as missing data."
         ),
         "input_schema": {
             "type": "object",
@@ -79,6 +82,9 @@ TOOLS = [
             },
             "required": ["entity"],
         },
+        # cache_control on the last tool caches the whole (stable) TOOLS block alongside
+        # the cached system prompt, so every turn after the first pays cache-read on both.
+        "cache_control": {"type": "ephemeral"},
     },
 ]
 
@@ -117,8 +123,16 @@ def run_tool(name: str, tool_input: dict) -> dict:
                 lines.append(f"- {r['name']} [{r['kind']}{loc}] — {r['detail']}{link}")
             content = "Register matches:\n" + "\n".join(lines)
         else:
-            content = ("No matching entries in the indexed ESMA registers (CASP authorisations, "
-                       "EMT/ART issuers, Title II white papers, or the warning list).")
+            c = registry.register_counts()
+            content = (
+                f"No entries matched “{query}” in the indexed ESMA registers. "
+                "Current register status — a zero is current market status, NOT missing data: "
+                f"{c['casps']} authorised CASPs · {c['emt_issuers']} e-money-token issuers · "
+                f"{c['art_issuers']} asset-referenced-token issuers authorised under Title III · "
+                f"{c['other_whitepapers']} Title II white papers · {c['non_compliant']} flagged entities. "
+                "If the user asked about a category that shows 0 (e.g. ART issuers), state plainly that "
+                "none have been authorised to date — do not imply the data is missing."
+            )
         return {
             "content": content,
             "summary": f"Looked up “{query}” in ESMA register → {len(results)} match(es)",
