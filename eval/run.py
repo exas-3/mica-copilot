@@ -174,6 +174,8 @@ def main() -> None:
 
     rows = []
     retr_hits = cite_hits = abstain_ok = faithful_ok = judged = reg_hits = 0
+    usage_totals: dict[str, int] = {}
+    usage_n = 0
 
     if args.e2e:
         from app.services import llm
@@ -199,6 +201,13 @@ def main() -> None:
 
         if args.e2e:
             result = llm.chat_sync(g["question"], [])
+            u = result.get("usage") or {}
+            if u:
+                for k, v in u.items():
+                    usage_totals[k] = usage_totals.get(k, 0) + (v or 0)
+                usage_n += 1
+                row["model"] = result.get("model")
+                row["usage"] = u
             cited_raw = [(c.get("article_ref") or "") for c in result.get("citations", [])]
             if g["kind"] == "answerable":
                 c_hit = _match(g, cited_raw)
@@ -229,6 +238,22 @@ def main() -> None:
             scorecard["faithfulness"] = round(faithful_ok / judged, 3)
     if registers:
         scorecard["register_hit"] = round(reg_hits / max(len(registers), 1), 3)
+    if usage_n:
+        inp = usage_totals.get("input_tokens", 0)
+        out = usage_totals.get("output_tokens", 0)
+        cread = usage_totals.get("cache_read_input_tokens", 0)
+        ccreate = usage_totals.get("cache_creation_input_tokens", 0)
+        total = inp + out
+        scorecard["usage"] = {
+            "queries_measured": usage_n,
+            "avg_input_tokens": round(inp / usage_n, 1),
+            "avg_output_tokens": round(out / usage_n, 1),
+            "avg_total_tokens": round(total / usage_n, 1),
+            "output_share": round(out / total, 3) if total else 0.0,
+            # cache-read ratio over (cache_read + fresh input) — confirms the prefix cache hits.
+            "cache_read_ratio": round(cread / (cread + inp), 3) if (cread + inp) else 0.0,
+            "cache_creation_tokens": ccreate,
+        }
 
     RESULTS.mkdir(exist_ok=True)
     payload = json.dumps({"scorecard": scorecard, "rows": rows}, indent=2)
@@ -238,9 +263,17 @@ def main() -> None:
 
     print("\n=== MiCA Copilot — Evaluation Scorecard ===")
     for k, v in scorecard.items():
+        if isinstance(v, dict):
+            continue
         print(f"  {k:24s}: {v}")
+    if "usage" in scorecard:
+        u = scorecard["usage"]
+        print(f"  {'tokens/query (in→out)':24s}: {u['avg_input_tokens']:.0f} → {u['avg_output_tokens']:.0f} "
+              f"(total {u['avg_total_tokens']:.0f}, output share {u['output_share']:.0%})")
+        print(f"  {'cache-read ratio':24s}: {u['cache_read_ratio']:.0%}  (n={u['queries_measured']})")
     s = get_settings()
-    print(f"\n  config: embedder={s.embedder} retrieval_mode={s.retrieval_mode} rerank={s.rerank}")
+    print(f"\n  config: embedder={s.embedder} retrieval_mode={s.retrieval_mode} rerank={s.rerank} "
+          f"effort={s.agent_effort} max_tokens={s.chat_max_tokens} query_routing={s.query_routing}")
     if args.baseline:
         _diff(args.baseline, scorecard)
     print("  (details written to eval/results/scorecard.json)")

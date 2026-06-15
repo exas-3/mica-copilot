@@ -133,6 +133,24 @@ The large, stable system prefix (MiCA map + rules) carries `cache_control: {type
 **per-question context is appended *after* it** (never inside the cached block) — so repeat requests pay
 cache-read (~0.1×) instead of full price. Verified: a second call read ~1,693 `cache_read_input_tokens`.
 
+**Token-efficiency knobs (config, A/B-able).** Most spend on a query is *output* tokens (adaptive
+thinking + answer, the $15/1M side), so the defaults favour terse, correct answers:
+- `agent_effort` (`output_config.effort`, default **`low`**) — caps thinking depth; bump to `medium` if a
+  multi-provision synthesis regresses on the eval.
+- `chat_max_tokens` (default **1536**) — answers are short by design; the `# Style` prompt leads with the
+  direct answer and skips padding (the citations panel already lists sources). Watch `stop_reason ==
+  "max_tokens"` in the usage data and raise if truncation appears.
+- `classify_model` (default **`claude-haiku-4-5`**) — `/classify` is structured + RAG-grounded, low-risk
+  on Haiku ($1/$5).
+- `query_routing` (default **off**) — when on, `_route_model` sends a *clearly-simple, single-provision*
+  lookup (short, no news/deadline/entity/register/enforcement signal, no history) to Haiku; everything
+  abstention-prone or current-facts stays on Sonnet. Caches are **model-scoped**, so a routed query starts
+  a separate warm prefix. Left off until the eval proves Haiku holds `citation_hit` / `abstention_accuracy`.
+
+Every chat turn now accumulates `response.usage` (input / output / cache-creation / cache-read tokens);
+`chat_sync` returns it and `stream_chat` emits a final `usage` SSE event, so `eval.run --e2e` reports
+avg tokens/query, output share, and the cache-read ratio for before/after comparison.
+
 ## 10. Evaluation methodology
 
 `python -m eval.run [--e2e] [--judge]` against **`eval/goldens.jsonl` — 13 hand-curated cases** (11

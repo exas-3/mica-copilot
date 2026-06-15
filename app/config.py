@@ -19,6 +19,14 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     agent_model: str = "claude-sonnet-4-6"  # cost-effective default; claude-opus-4-8 for max quality
     cheap_model: str = "claude-haiku-4-5"
+    # Token-efficiency knobs (see docs/METHODOLOGY.md). The agent loop spends most of its
+    # tokens on output (adaptive thinking + answer); these cut that without losing correctness.
+    agent_effort: str = "low"          # output_config.effort for the chat loop: low|medium|high|max
+    chat_max_tokens: int = 1536        # max_tokens cap for chat turns (answers are terse by design)
+    # Model routing — push cheap/structured sub-tasks to Haiku ($1/$5 vs Sonnet $3/$15).
+    classify_model: str = "claude-haiku-4-5"      # /classify is structured + RAG-grounded → safe on Haiku
+    simple_query_model: str = "claude-haiku-4-5"  # used by chat routing when query_routing is on
+    query_routing: bool = False        # off until eval-validated: route clearly-simple lookups to Haiku
 
     # Embeddings
     embedder: str = "local"  # "voyage" | "local"

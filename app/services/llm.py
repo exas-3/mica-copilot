@@ -30,9 +30,18 @@ from app.config import get_settings
 from app.services import rag
 
 _MAX_TOOL_ITERS = 5
-_EFFORT = "medium"  # balance of quality vs. latency for an interactive copilot
 
 _client: anthropic.Anthropic | None = None
+
+# Signals that a chat query needs Sonnet's stronger reasoning / current-facts handling and
+# must NOT be routed to Haiku: news/current status, deadlines, named entities/registers,
+# white papers, enforcement, or anything abstention-prone. Conservative by design.
+_SONNET_SIGNALS = (
+    "news", "latest", "recent", "current", "now", "today", "deadline", "transition",
+    "transitional", "grandfather", "1 july", "register", "registered", "authorised",
+    "authorized", "white paper", "whitepaper", "enforcement", "flagged", "non-compliant",
+    "noncompliant", "sanction", "warning", "status of", "happening",
+)
 
 
 def _get_client() -> anthropic.Anthropic:
@@ -51,10 +60,35 @@ def _system_blocks() -> list[dict]:
 
 
 def _advanced_kwargs(thinking: bool = True) -> dict:
-    kw: dict = {"output_config": {"effort": _EFFORT}}
+    kw: dict = {"output_config": {"effort": get_settings().agent_effort}}
     if thinking:
         kw["thinking"] = {"type": "adaptive"}
     return kw
+
+
+def _route_model(message: str, history) -> str:
+    """Pick the model for a chat turn. Defaults to Sonnet; routes a clearly-simple,
+    single-provision lookup to Haiku ONLY when query_routing is enabled. Anything with a
+    current-facts / entity / register / enforcement signal, or any multi-turn context, stays
+    on Sonnet. Caches are model-scoped, so a routed query starts a separate warm prefix."""
+    s = get_settings()
+    if not s.query_routing:
+        return s.agent_model
+    if history:  # follow-ups can reference earlier context — keep the stronger model
+        return s.agent_model
+    text = message.lower()
+    if len(message) > 200 or any(sig in text for sig in _SONNET_SIGNALS):
+        return s.agent_model
+    return s.simple_query_model
+
+
+def _accumulate_usage(acc: dict, usage) -> None:
+    """Sum a response's token usage into an accumulator (one chat turn = several API calls)."""
+    if usage is None:
+        return
+    for field in ("input_tokens", "output_tokens",
+                  "cache_creation_input_tokens", "cache_read_input_tokens"):
+        acc[field] = acc.get(field, 0) + (getattr(usage, field, 0) or 0)
 
 
 def _create(client: anthropic.Anthropic, *, thinking: bool = True, **kwargs):
@@ -86,16 +120,19 @@ def chat_sync(message: str, history) -> dict:
     tool_events: list[dict] = []
     citations: list[dict] = []
     seen_refs: set[str] = set()
+    usage: dict = {}
+    model = _route_model(message, history)
 
     for _ in range(_MAX_TOOL_ITERS):
         resp = _create(
             client,
-            model=s.agent_model,
-            max_tokens=4096,
+            model=model,
+            max_tokens=s.chat_max_tokens,
             system=_system_blocks(),
             tools=TOOLS,
             messages=messages,
         )
+        _accumulate_usage(usage, getattr(resp, "usage", None))
         if resp.stop_reason == "tool_use":
             messages.append({"role": "assistant", "content": resp.content})
             tool_results = []
@@ -119,6 +156,8 @@ def chat_sync(message: str, history) -> dict:
             "citations": citations,
             "tool_events": tool_events,
             "grounded": bool(citations),
+            "model": model,
+            "usage": usage,
         }
 
     return {
@@ -126,6 +165,8 @@ def chat_sync(message: str, history) -> dict:
         "citations": citations,
         "tool_events": tool_events,
         "grounded": bool(citations),
+        "model": model,
+        "usage": usage,
     }
 
 
@@ -145,14 +186,16 @@ def stream_chat(message: str, history) -> Iterator[str]:
     messages = _to_message_dicts(history) + [{"role": "user", "content": message}]
     citations: list[dict] = []
     seen_refs: set[str] = set()
+    usage: dict = {}
+    model = _route_model(message, history)
 
     try:
         for _ in range(_MAX_TOOL_ITERS):
             pending: list[str] = []
             with _open_stream(
                 client,
-                model=s.agent_model,
-                max_tokens=4096,
+                model=model,
+                max_tokens=s.chat_max_tokens,
                 system=_system_blocks(),
                 tools=TOOLS,
                 messages=messages,
@@ -161,6 +204,7 @@ def stream_chat(message: str, history) -> Iterator[str]:
                     pending.append(text)
                     yield _sse({"type": "token", "text": text})
                 final = stream.get_final_message()
+            _accumulate_usage(usage, getattr(final, "usage", None))
 
             if final.stop_reason == "tool_use":
                 # Any text streamed this turn was preamble before a tool call, not the
@@ -191,10 +235,12 @@ def stream_chat(message: str, history) -> Iterator[str]:
 
             # Final answer already streamed as tokens above.
             yield _sse({"type": "citations", "citations": citations, "grounded": bool(citations)})
+            yield _sse({"type": "usage", "model": model, "usage": usage})
             yield _sse({"type": "done"})
             return
 
         yield _sse({"type": "citations", "citations": citations, "grounded": bool(citations)})
+        yield _sse({"type": "usage", "model": model, "usage": usage})
         yield _sse({"type": "done"})
     except anthropic.APIError as e:
         yield _sse({"type": "error", "message": f"Claude API error: {e}"})
@@ -220,8 +266,9 @@ def classify(description: str) -> dict:
     )
 
     # `messages` is passed explicitly in each branch so it is never supplied twice
-    # (passing it via **kwargs *and* as a keyword raises TypeError).
-    kwargs = dict(model=s.agent_model, max_tokens=2048, system=_system_blocks())
+    # (passing it via **kwargs *and* as a keyword raises TypeError). Structured output over
+    # retrieved provisions is low-risk on Haiku, so /classify uses the cheaper classify_model.
+    kwargs = dict(model=s.classify_model, max_tokens=2048, system=_system_blocks())
     try:
         resp = client.messages.create(
             **kwargs,
