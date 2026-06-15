@@ -76,6 +76,14 @@ polls 14 RSS feeds, fetches **full article text** (`trafilatura`), triages relev
 embeds into `news_chunks` (recency-ranked). Both idempotent; the document corpus rebuilds offline
 from a committed cache.
 
+**Privacy & telemetry.** Two telemetry paths, both privacy-minimising: (1) **conversation logging** —
+each question + answer is written to a write-only `chat_logs` table for quality/debugging; it is
+**not** exposed to the agent (no tool or retrieval path reads it) and carries no identifier; and (2)
+**analytics** — privacy-friendly, **cookieless** [Plausible](https://plausible.io), **self-hosted** on
+our own server and **proxied first-party** through `/pa/*` (a Next.js rewrite — avoids `http→https`
+mixed content and keeps the browser on our own domain). No cookies, no cross-site tracking, no
+third-party analytics provider. See the [Privacy Policy](https://mica.exadaktylos.xyz/privacy).
+
 ## 5. FastAPI endpoints & services
 
 **Routers** (`app/routers/`): `chat` (`/chat` SSE, `/chat/sync`), `classify` (`/classify`),

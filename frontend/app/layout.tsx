@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Instrument_Serif } from "next/font/google";
@@ -95,6 +96,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} ${serif.variable}`}>
       <body>
         <JsonLd data={GRAPH} />
+        {/* Privacy-friendly, cookieless analytics (self-hosted Plausible), proxied first-party
+            via /pa/* (see next.config.mjs). Production only. Sets the endpoint before loading the
+            tracker so every event goes through the proxy. */}
+        {process.env.NODE_ENV === "production" && (
+          <Script id="plausible" strategy="afterInteractive">
+            {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init({endpoint:'/pa/event'});(function(){var s=document.createElement('script');s.defer=true;s.src='/pa/js/pa-vOurEnB9yfT5iK9icLbkW.js';document.head.appendChild(s);})();`}
+          </Script>
+        )}
         <Shell>{children}</Shell>
       </body>
     </html>

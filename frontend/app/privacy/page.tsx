@@ -30,8 +30,16 @@ address and basic request metadata (e.g. browser type, timestamp, page requested
 by **Cloudflare** (our network provider) and may appear briefly in short-lived operational logs. It
 is used only to deliver, secure, and debug the Service.
 
-**No accounts, no profiles, no analytics.** The Service has no sign-up or login, sets no
-advertising or analytics cookies, and does not track you across websites.
+**No accounts, no advertising, no cross-site tracking.** The Service has no sign-up or login and
+shows no ads.
+
+**Analytics.** We use **Plausible Analytics**, a privacy-friendly, **cookieless** tool that we
+**self-host on our own server** — your data is not sent to a third-party analytics company. It
+records only **aggregate** usage (page views, referrers, country, browser/device type) and does
+**not** use cookies, build a profile of you, or track you across other websites. To count unique
+visits it derives a hash from your IP address and user-agent using a salt that **rotates every 24
+hours**, then discards it; it cannot be used to identify you. The analytics requests are proxied
+through this site (the \`/pa/\` path) so your browser only ever contacts our own domain.
 
 ## Legal bases (GDPR)
 
@@ -41,12 +49,15 @@ advertising or analytics cookies, and does not track you across websites.
   interests** (Art. 6(1)(f) GDPR).
 - Keeping the Service available and secure (network data, abuse prevention) — **legitimate
   interests** (Art. 6(1)(f) GDPR).
+- Aggregate, cookieless analytics to understand and improve the Service — **legitimate interests**
+  (Art. 6(1)(f) GDPR).
 
 ## Cookies
 
-The Service itself sets **no tracking or advertising cookies**. Cloudflare may set **strictly
-necessary** security cookies (e.g. \`__cf_bm\`) to distinguish humans from bots and protect the
-Service; these are not used to profile you and, being strictly necessary, do not require consent.
+The Service sets **no tracking or advertising cookies**, and our analytics (Plausible) is
+**cookieless**. Cloudflare may set **strictly necessary** security cookies (e.g. \`__cf_bm\`) to
+distinguish humans from bots and protect the Service; these are not used to profile you and, being
+strictly necessary, do not require consent.
 
 ## Third parties (processors)
 
