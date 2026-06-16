@@ -4,6 +4,7 @@ services:
   db:
     image: pgvector/pgvector:pg16
     container_name: mica-copilot-db
+    restart: unless-stopped   # auto-recover on host reboot / docker daemon restart
     environment:
       POSTGRES_USER: mica
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mica}   # real value from .env (gitignored); 'mica' is the fresh-clone dev default
