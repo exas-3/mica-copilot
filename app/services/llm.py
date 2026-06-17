@@ -16,6 +16,7 @@ Design notes
 from __future__ import annotations
 
 import json
+import sys
 from typing import Iterator
 
 import anthropic
@@ -112,6 +113,14 @@ def _to_message_dicts(history) -> list[dict]:
 
 
 # ── Synchronous chat (full agent loop, JSON response) ────────────────────────
+def _safe_error(e: Exception) -> str:
+    """User-facing error string. Never leaks the raw provider error (billing text,
+    request ids, prompts); the real error is logged server-side for the developer."""
+    code = getattr(e, "status_code", None) or 500
+    print(f"[llm] upstream error: {type(e).__name__} status={code}: {e}", file=sys.stderr, flush=True)
+    return f"Error {code} — please contact the developer."
+
+
 def chat_sync(message: str, history, *, log: bool = True) -> dict:
     client = _get_client()
     s = get_settings()
@@ -124,14 +133,17 @@ def chat_sync(message: str, history, *, log: bool = True) -> dict:
     model = _route_model(message, history)
 
     for _ in range(_MAX_TOOL_ITERS):
-        resp = _create(
-            client,
-            model=model,
-            max_tokens=s.chat_max_tokens,
-            system=_system_blocks(),
-            tools=TOOLS,
-            messages=messages,
-        )
+        try:
+            resp = _create(
+                client,
+                model=model,
+                max_tokens=s.chat_max_tokens,
+                system=_system_blocks(),
+                tools=TOOLS,
+                messages=messages,
+            )
+        except anthropic.APIError as e:
+            raise RuntimeError(_safe_error(e))
         _accumulate_usage(usage, getattr(resp, "usage", None))
         if resp.stop_reason == "tool_use":
             messages.append({"role": "assistant", "content": resp.content})
@@ -269,9 +281,9 @@ def stream_chat(message: str, history) -> Iterator[str]:
                          citations=citations, tool_events=tool_events, usage=usage)
         yield _sse({"type": "done"})
     except anthropic.APIError as e:
-        yield _sse({"type": "error", "message": f"Claude API error: {e}"})
+        yield _sse({"type": "error", "message": _safe_error(e)})
     except Exception as e:  # noqa: BLE001 — surface a clean SSE error to the UI
-        yield _sse({"type": "error", "message": f"Unexpected error: {e}"})
+        yield _sse({"type": "error", "message": _safe_error(e)})
 
 
 # ── Structured classification (RAG-grounded → JSON schema) ───────────────────
@@ -296,17 +308,20 @@ def classify(description: str) -> dict:
     # retrieved provisions is low-risk on Haiku, so /classify uses the cheaper classify_model.
     kwargs = dict(model=s.classify_model, max_tokens=2048, system=_system_blocks())
     try:
-        resp = client.messages.create(
-            **kwargs,
-            messages=[{"role": "user", "content": user}],
-            output_config={"format": {"type": "json_schema", "schema": MICA_CLASSIFICATION_SCHEMA}},
-        )
-    except TypeError:
-        # Older SDK without output_config: ask for JSON in-prompt as a fallback.
-        resp = client.messages.create(
-            **kwargs,
-            messages=[{"role": "user", "content": user + "\n\nReturn ONLY a JSON object matching the required schema."}],
-        )
+        try:
+            resp = client.messages.create(
+                **kwargs,
+                messages=[{"role": "user", "content": user}],
+                output_config={"format": {"type": "json_schema", "schema": MICA_CLASSIFICATION_SCHEMA}},
+            )
+        except TypeError:
+            # Older SDK without output_config: ask for JSON in-prompt as a fallback.
+            resp = client.messages.create(
+                **kwargs,
+                messages=[{"role": "user", "content": user + "\n\nReturn ONLY a JSON object matching the required schema."}],
+            )
+    except anthropic.APIError as e:
+        raise RuntimeError(_safe_error(e))
 
     text = "".join(b.text for b in resp.content if getattr(b, "type", None) == "text").strip()
     data: dict = {}
