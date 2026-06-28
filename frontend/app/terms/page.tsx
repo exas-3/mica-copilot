@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 const CONTENT = `
-By using the MiCA Compliance Copilot ("the Service", at **mica.exadaktylos.xyz**) you agree to these
+By using the MiCA Compliance Copilot ("the Service", at **micacopilot.exadaktylos.xyz**) you agree to these
 Terms. If you do not agree, please do not use the Service.
 
 ## 1. What the Service is

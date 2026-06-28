@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     # Model routing — push cheap/structured sub-tasks to Haiku ($1/$5 vs Sonnet $3/$15).
     classify_model: str = "claude-haiku-4-5"      # /classify is structured + RAG-grounded → safe on Haiku
     simple_query_model: str = "claude-haiku-4-5"  # used by chat routing when query_routing is on
-    query_routing: bool = False        # off until eval-validated: route clearly-simple lookups to Haiku
+    query_routing: bool = False        # off: eval showed routing sends ~93% of chat to Haiku and drops abstention 1.0→0.83 (Haiku under-abstains on out-of-corpus questions) — keep chat on Sonnet
 
     # Embeddings
     embedder: str = "local"  # "voyage" | "local"

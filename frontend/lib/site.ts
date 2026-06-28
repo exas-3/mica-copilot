@@ -1,5 +1,5 @@
 // Shared site constants for metadata, sitemap, manifest and structured data.
-export const SITE_URL = "https://mica.exadaktylos.xyz";
+export const SITE_URL = "https://micacopilot.exadaktylos.xyz";
 export const SITE_NAME = "MiCA Compliance Copilot";
 export const AUTHOR = "Stergios Exadaktylos";
 export const SITE_TAGLINE = "EU crypto-asset regulation, grounded & cited";

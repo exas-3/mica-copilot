@@ -4,7 +4,7 @@
 **Type:** Generative-AI application — *not a chatbot*: AI logic embedded in a clean
 software architecture (FastAPI backend + functional UI + GenAI layer).
 
-**Live demo:** [https://mica.exadaktylos.xyz](https://mica.exadaktylos.xyz) ·
+**Live demo:** [https://micacopilot.exadaktylos.xyz](https://micacopilot.exadaktylos.xyz) ·
 **GitHub:** [https://github.com/exas-3/mica-copilot](https://github.com/exas-3/mica-copilot) (public, MIT).
 
 ---
@@ -85,7 +85,7 @@ each question + answer is written to a write-only `chat_logs` table for quality/
 **analytics** — privacy-friendly, **cookieless** [Plausible](https://plausible.io), **self-hosted** on
 our own server and **proxied first-party** through `/pa/*` (a Next.js rewrite — avoids `http→https`
 mixed content and keeps the browser on our own domain). No cookies, no cross-site tracking, no
-third-party analytics provider. See the [Privacy Policy](https://mica.exadaktylos.xyz/privacy).
+third-party analytics provider. See the [Privacy Policy](https://micacopilot.exadaktylos.xyz/privacy).
 
 **Deployment.** Only the **Next.js UI (:3000)** is internet-facing — it is exposed through a
 **Cloudflare Tunnel** (`cloudflared`, systemd `mica-tunnel` service), so there are no open inbound
@@ -151,7 +151,7 @@ reviewer can exercise every path in one click.
 
 ### Screenshots
 
-> Screenshots are from the current production UI at [mica.exadaktylos.xyz](https://mica.exadaktylos.xyz).
+> Screenshots are from the current production UI at [micacopilot.exadaktylos.xyz](https://micacopilot.exadaktylos.xyz).
 
 **Ask MiCA — landing.** Clean entry point with example prompts and the Citations panel (warm-paper +
 EU-blue design system, no Tailwind).
@@ -237,7 +237,7 @@ neighbouring article). Reproduce with `python -m eval.run --e2e --judge`; per-qu
 
 ### Web performance & accessibility (Lighthouse)
 
-Measured on the live production build (`mica.exadaktylos.xyz`):
+Measured on the live production build (`micacopilot.exadaktylos.xyz`):
 
 | Category | Desktop | Mobile |
 |---|---|---|
@@ -263,7 +263,7 @@ coverage is partial). General information, **not legal advice**.
 
 **Already deployed.** FastAPI runs as the systemd `mica-api` service (localhost-only `:8000`), Next.js
 as `mica-web` (production build, `:3000`), and Postgres in Docker, all exposed via a Cloudflare Tunnel
-(`mica-tunnel`) at [https://mica.exadaktylos.xyz](https://mica.exadaktylos.xyz) — only the frontend is
+(`mica-tunnel`) at [https://micacopilot.exadaktylos.xyz](https://micacopilot.exadaktylos.xyz) — only the frontend is
 internet-facing.
 
 **Future work.** (a) Hybrid retrieval (pgvector + the shipped `tsvector` column) and a Voyage
@@ -280,7 +280,7 @@ request **and** response, the SSE event stream, the UI flows, and the eval run).
 only the Next.js UI through a **Cloudflare Tunnel** (`mica-tunnel`), with the three systemd services
 (`mica-api` localhost-only `:8000`, `mica-web` production build `:3000`, `mica-tunnel`), the same-origin
 `/api` proxy, and the self-hosted Plausible `/pa/*` proxy. The public deployment is live at
-[https://mica.exadaktylos.xyz](https://mica.exadaktylos.xyz).
+[https://micacopilot.exadaktylos.xyz](https://micacopilot.exadaktylos.xyz).
 
 Quick check after setup:
 
@@ -315,4 +315,4 @@ How this project satisfies each requirement of the *AI for Developers: Design, B
 | **Documentation (DOC/PDF)** | This file (`docs/DOCUMENTATION.md`) — export to PDF for submission. |
 | **README** | [`../README.md`](../README.md). |
 | **Usage examples** | [`EXAMPLES.md`](EXAMPLES.md). |
-| **Demo (optional)** | Live public UI at [https://mica.exadaktylos.xyz](https://mica.exadaktylos.xyz) (local dev at `localhost:3000`); `EXAMPLES.md` lists one-click example prompts per path. |
+| **Demo (optional)** | Live public UI at [https://micacopilot.exadaktylos.xyz](https://micacopilot.exadaktylos.xyz) (local dev at `localhost:3000`); `EXAMPLES.md` lists one-click example prompts per path. |

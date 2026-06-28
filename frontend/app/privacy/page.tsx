@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 const CONTENT = `
-MiCA Compliance Copilot ("the Service", at **mica.exadaktylos.xyz**) is a non-commercial,
+MiCA Compliance Copilot ("the Service", at **micacopilot.exadaktylos.xyz**) is a non-commercial,
 educational tool. This policy explains what data is processed when you use it. We have designed
 the Service to process as little personal data as possible.
 

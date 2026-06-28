@@ -1,12 +1,12 @@
-# Public access via Cloudflare Tunnel → `mica.exadaktylos.xyz`
+# Public access via Cloudflare Tunnel → `micacopilot.exadaktylos.xyz`
 
-Exposes the locally-running MiCA Copilot to the public internet at **https://mica.exadaktylos.xyz**,
+Exposes the locally-running MiCA Copilot to the public internet at **https://micacopilot.exadaktylos.xyz**,
 free, with automatic HTTPS and **no open inbound ports** on this machine.
 
 ## Architecture (why the API stays private)
 
 ```
-Browser ──https──> mica.exadaktylos.xyz ──(Cloudflare edge)──> cloudflared (this PC)
+Browser ──https──> micacopilot.exadaktylos.xyz ──(Cloudflare edge)──> cloudflared (this PC)
                                                                    │
                                                                    ▼
                                                         Next.js app  :3000
@@ -16,7 +16,7 @@ Browser ──https──> mica.exadaktylos.xyz ──(Cloudflare edge)──> c
 ```
 
 - The tunnel publishes **only the Next.js app (:3000)**.
-- The browser only ever talks to `mica.exadaktylos.xyz`. The UI calls `/api/*` on that same host;
+- The browser only ever talks to `micacopilot.exadaktylos.xyz`. The UI calls `/api/*` on that same host;
   Next.js (`next.config.mjs` `rewrites`) forwards those to `127.0.0.1:8000` **server-side**.
 - The FastAPI backend binds to `127.0.0.1` and is **never** in the tunnel ingress, so it is not
   reachable from the internet — only through the app. (No CORS needed: it's all same-origin.)
@@ -61,11 +61,11 @@ This writes `~/.cloudflared/cert.pem`.
 bash ~/mica-copilot/deploy/cloudflared-setup.sh
 ```
 Creates the `mica` tunnel, writes `~/.cloudflared/config.yml` (ingress → :3000 only), and adds the
-`mica.exadaktylos.xyz` DNS record.
+`micacopilot.exadaktylos.xyz` DNS record.
 
 ### 5. Run it
 ```bash
-cloudflared tunnel run mica       # foreground test → open https://mica.exadaktylos.xyz
+cloudflared tunnel run mica       # foreground test → open https://micacopilot.exadaktylos.xyz
 ```
 
 ## Run as a service (keep it up)

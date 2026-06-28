@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Finalize the Cloudflare Tunnel for mica.exadaktylos.xyz.
+# Finalize the Cloudflare Tunnel for micacopilot.exadaktylos.xyz.
 #
 # Run this AFTER `cloudflared tunnel login` (which authorises the exadaktylos.xyz zone and
 # drops ~/.cloudflared/cert.pem). It is idempotent: re-running reuses the existing tunnel.
@@ -12,7 +12,7 @@
 set -euo pipefail
 
 TUNNEL_NAME="mica"
-HOSTNAME="mica.exadaktylos.xyz"
+HOSTNAME="micacopilot.exadaktylos.xyz"
 APP_URL="http://localhost:3000"
 CFDIR="$HOME/.cloudflared"
 CLOUDFLARED="$(command -v cloudflared || echo "$HOME/.local/bin/cloudflared")"

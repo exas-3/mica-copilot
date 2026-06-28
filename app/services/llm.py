@@ -2,8 +2,10 @@
 
 Design notes
 ------------
-* Model: Sonnet 4.6 by default for the agent loop (adaptive thinking + effort); set
-  AGENT_MODEL=claude-opus-4-8 for max quality. Haiku 4.5 handles cheap sub-tasks.
+* Model: Sonnet 4.6 for the agent loop (adaptive thinking + effort); set AGENT_MODEL=claude-opus-4-8
+  for max quality. Haiku 4.5 handles cheap sub-tasks. Optional query_routing (off by default — it
+  degraded abstention in eval) can route clearly-simple lookups to Haiku; adaptive thinking + effort
+  apply on Sonnet/Opus only (Haiku 4.5 rejects them), so _advanced_kwargs gates them per chosen model.
 * Prompt caching: the large, stable SYSTEM_PROMPT carries ``cache_control`` so it is
   cached across requests; per-question retrieved context arrives only inside the
   conversation turns, after the cached prefix.
@@ -60,7 +62,18 @@ def _system_blocks() -> list[dict]:
     return [{"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}}]
 
 
-def _advanced_kwargs(thinking: bool = True) -> dict:
+# Adaptive thinking + output_config.effort are supported on Opus 4.6+ and Sonnet 4.6, but NOT
+# on Haiku 4.5 (both return 400 "… not supported on this model"). With query_routing on, the
+# chat router can pick Haiku for simple lookups, so these advanced controls are gated on the
+# chosen model rather than sent unconditionally.
+def _supports_advanced(model: str) -> bool:
+    m = (model or "").lower()
+    return "opus" in m or "sonnet-4-6" in m
+
+
+def _advanced_kwargs(model: str, thinking: bool = True) -> dict:
+    if not _supports_advanced(model):
+        return {}  # e.g. Haiku 4.5 — adaptive thinking + effort are unsupported, send a plain request
     kw: dict = {"output_config": {"effort": get_settings().agent_effort}}
     if thinking:
         kw["thinking"] = {"type": "adaptive"}
@@ -95,7 +108,7 @@ def _accumulate_usage(acc: dict, usage) -> None:
 def _create(client: anthropic.Anthropic, *, thinking: bool = True, **kwargs):
     """messages.create, tolerant of SDK versions that don't know the newest params."""
     try:
-        return client.messages.create(**kwargs, **_advanced_kwargs(thinking))
+        return client.messages.create(**kwargs, **_advanced_kwargs(kwargs.get("model", ""), thinking))
     except TypeError:
         return client.messages.create(**kwargs)
 
@@ -103,7 +116,7 @@ def _create(client: anthropic.Anthropic, *, thinking: bool = True, **kwargs):
 def _open_stream(client: anthropic.Anthropic, *, thinking: bool = True, **kwargs):
     """messages.stream context manager, with the same advanced-param tolerance."""
     try:
-        return client.messages.stream(**kwargs, **_advanced_kwargs(thinking))
+        return client.messages.stream(**kwargs, **_advanced_kwargs(kwargs.get("model", ""), thinking))
     except TypeError:
         return client.messages.stream(**kwargs)
 

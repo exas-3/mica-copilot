@@ -14,7 +14,7 @@ answer when the indexed corpus doesn't support a grounded answer.
 > Architecture:
 > **FastAPI backend + Next.js UI + Claude (RAG · agents · tool-calling · structured outputs · prompt caching)**.
 
-**Live demo:** https://mica.exadaktylos.xyz · **GitHub:** https://github.com/exas-3/mica-copilot (public, MIT).
+**Live demo:** https://micacopilot.exadaktylos.xyz · **GitHub:** https://github.com/exas-3/mica-copilot (public, MIT).
 
 > **Sibling project — [MiCA Dashboard](https://github.com/exas-3/mica-dashboard).** This copilot is the
 > *RAG + agentic Q&A* half of a two-part MiCA suite; the **MiCA Dashboard** is the *data + visualisation*
